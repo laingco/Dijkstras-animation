@@ -36,6 +36,7 @@ public class GUI extends JFrame{
         fileMenuSave = new JMenuItem("Save");
         fileMenuSaveAs = new JMenuItem("Save As");
         fileMenuOpen = new JMenuItem("Open");
+        fileMenuOpen.addActionListener(e -> {});
 
         fileMenu.add(fileMenuNew);
         fileMenu.add(fileMenuSave);
