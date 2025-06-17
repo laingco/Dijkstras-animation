@@ -11,4 +11,8 @@ public class Dijkstras {
             node.setNextNodeDistance(distance);
         }
     }
+
+    public void importData(){
+        FileEditor files = new FileEditor();
+    }
 }

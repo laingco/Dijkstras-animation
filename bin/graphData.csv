@@ -1,6 +1,6 @@
 5
 WellingtonCity,400,650
-Porirua,200, 300
+Porirua,200,300
 Petone,550,450
 Eastbourne,810,650
 Upper Hutt,700,200
@@ -8,6 +8,6 @@ Upper Hutt,700,200
 WellingtonCity,Porirua,150
 WellingtonCity,Petone,100
 Porirua,Petone,200
-Porirua, Upper Hutt, 300
+Porirua,Upper Hutt,300
 Petone,Upper Hutt,150
 Petone,Eastbourne,100

@@ -25,6 +25,12 @@ public class GUI extends JFrame{
         createMenuBar();
         graphicsPanel = new GraphicsPanel();
 
+        FileEditor files = new FileEditor();
+        files.printData();
+        for (int i = 0; i < files.nodes.size(); i++){
+            graphicsPanel.addNode(Integer.parseInt(files.nodes.get(i)[1]), Integer.parseInt(files.nodes.get(i)[2]));
+        }
+
         this.getContentPane().add(graphicsPanel, BorderLayout.CENTER);
         this.setVisible(true);
     }
