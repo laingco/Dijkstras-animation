@@ -23,15 +23,14 @@ public class GUI extends JFrame{
         this.setTitle("Dijkstra's animation");
 
         createMenuBar();
-        graphicsPanel = new GraphicsPanel();
 
-        FileEditor files = new FileEditor();
-        files.printData();
-        for (int i = 0; i < files.nodes.size(); i++){
-            graphicsPanel.addNode(Integer.parseInt(files.nodes.get(i)[1]), Integer.parseInt(files.nodes.get(i)[2]));
-        }
+        Dijkstras dijkstras = new Dijkstras();
 
-        this.getContentPane().add(graphicsPanel, BorderLayout.CENTER);
+        graphicsPanel = dijkstras.getGraphicsPanel();
+        
+        dijkstras.files.printData();
+
+        this.getContentPane().add(this.graphicsPanel, BorderLayout.CENTER);
         this.setVisible(true);
     }
 
@@ -42,7 +41,7 @@ public class GUI extends JFrame{
         fileMenuSave = new JMenuItem("Save");
         fileMenuSaveAs = new JMenuItem("Save As");
         fileMenuOpen = new JMenuItem("Open");
-        fileMenuOpen.addActionListener(e -> {});
+        fileMenuOpen.addActionListener(e -> {graphicsPanel.nodeColor(0,0);});
 
         fileMenu.add(fileMenuNew);
         fileMenu.add(fileMenuSave);
