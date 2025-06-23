@@ -1,46 +1,43 @@
-public class DijkstrasNode {
-    private DijkstrasNode nextNode;
-    private double nextNodeDistance;
+import java.util.ArrayList;
+
+public class DijkstrasNodeTree {
+    private ArrayList<DijkstrasNodeTree> nextNode = new ArrayList<DijkstrasNodeTree>();
     private int nodeX;
     private int nodeY;
     private String nodeName;
     private int nodeIndex;
-    private boolean visited;
     
-    public DijkstrasNode(){
+    public DijkstrasNodeTree(){
         this.nextNode = null;
-        this.nextNodeDistance = Integer.MAX_VALUE;
-        this.visited = false;
+        this.nodeName = null;
     }
 
-    public DijkstrasNode(String name, int index, int xPos, int yPos){
+    public DijkstrasNodeTree(String name, int index, int xPos, int yPos){
         this.nextNode = null;
-        this.nextNodeDistance = Integer.MAX_VALUE;
         this.nodeName = name;
         this.nodeX = xPos;
         this.nodeY = yPos;
-        this.visited = false;
         this.nodeIndex = index;
     }
 
-    public DijkstrasNode(String name, int xPos, int yPos, DijkstrasNode nextNode, double nextDist){
+    public DijkstrasNodeTree(String name, int index, int xPos, int yPos, ArrayList<DijkstrasNodeTree> nextNode){
         this.nextNode = nextNode;
-        this.nextNodeDistance = nextDist;
         this.nodeName = name;
         this.nodeX = xPos;
         this.nodeY = yPos;
+        this.nodeIndex = index;
     }
 
-    public void setNextNode(DijkstrasNode node){
+    public void setNextNode(ArrayList<DijkstrasNodeTree> node){
         this.nextNode = node;
     }
 
-    public DijkstrasNode getNextNode(){
+    public ArrayList<DijkstrasNodeTree> getNextNode(){
         return this.nextNode;
     }
 
     public boolean hasNextNode(){
-        if (nextNode != null){
+        if (!this.nextNode.isEmpty()){
             return true;
         }else{
             return false;
@@ -55,8 +52,8 @@ public class DijkstrasNode {
         return this.nodeY;
     }
 
-    public void setNextNodeDistance(double distance){
-        this.nextNodeDistance = distance;
+    public int getIndex(){
+        return this.nodeIndex;
     }
 
     public void setNodeName(String name){

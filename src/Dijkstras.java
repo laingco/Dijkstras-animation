@@ -1,9 +1,15 @@
+import java.util.ArrayList;
+
 public class Dijkstras {
+    //may make private
     FileEditor files;
     int[] indexedLineStart;
     int[] indexedLineEnd;
     int[] weights;
     GraphicsPanel graphicsPanel;
+    private DijkstrasNode startNode;
+    private DijkstrasNode endNode;
+    private DijkstrasNodeTree dijkstrasTree;
 
     public Dijkstras(){
         importData();
@@ -20,6 +26,24 @@ public class Dijkstras {
 
     public void importData(){
         this.files = new FileEditor();
+        this.dijkstrasTree = createTree(new DijkstrasNodeTree(this.files.nodes.get(0)[0], 0, Integer.parseInt(this.files.nodes.get(0)[1]), Integer.parseInt(this.files.nodes.get(0)[2])));
+    }
+
+    public DijkstrasNodeTree createTree(DijkstrasNodeTree tree){
+        ArrayList<DijkstrasNodeTree> temp = new ArrayList<DijkstrasNodeTree>();
+        for (int j = 0; j < this.files.lineCount; j++){
+            if (this.indexedLineStart[j] == tree.getIndex()){
+                DijkstrasNodeTree temp2 = new DijkstrasNodeTree(
+                    this.files.nodes.get(indexedLineEnd[j])[0], 
+                    indexedLineEnd[j], 
+                    Integer.parseInt(this.files.nodes.get(indexedLineEnd[j])[1]), 
+                    Integer.parseInt(this.files.nodes.get(indexedLineEnd[j])[2])
+                );
+                temp.add(createTree(temp2));
+            }
+        }
+        tree.setNextNode(temp);
+        return tree;
     }
 
     public void indexData(){
