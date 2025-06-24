@@ -6,6 +6,7 @@ public class DijkstrasNodeTree {
     private int nodeY;
     private String nodeName;
     private int nodeIndex;
+    private boolean visited;
     
     public DijkstrasNodeTree(){
         this.nextNode = null;
@@ -58,5 +59,13 @@ public class DijkstrasNodeTree {
 
     public void setNodeName(String name){
         this.nodeName = name;
+    }
+
+    public void setVisited(boolean bool){
+        this.visited = bool;
+    }
+
+    public boolean getVisited(){
+        return visited;
     }
 }

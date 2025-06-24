@@ -26,12 +26,19 @@ public class Dijkstras {
 
     public void importData(){
         this.files = new FileEditor();
-        this.dijkstrasTree = createTree(new DijkstrasNodeTree(this.files.nodes.get(0)[0], 0, Integer.parseInt(this.files.nodes.get(0)[1]), Integer.parseInt(this.files.nodes.get(0)[2])));
+        indexData();
+        this.dijkstrasTree = createTree(new DijkstrasNodeTree(
+            this.files.nodes.get(0)[0], 
+            0, 
+            Integer.parseInt(this.files.nodes.get(0)[1]), 
+            Integer.parseInt(this.files.nodes.get(0)[2])
+        ));
+        printTree(this.dijkstrasTree);
     }
 
     public DijkstrasNodeTree createTree(DijkstrasNodeTree tree){
         ArrayList<DijkstrasNodeTree> temp = new ArrayList<DijkstrasNodeTree>();
-        for (int j = 0; j < this.files.lineCount; j++){
+        for (int j = 0; j < this.files.lines.size(); j++){
             if (this.indexedLineStart[j] == tree.getIndex()){
                 DijkstrasNodeTree temp2 = new DijkstrasNodeTree(
                     this.files.nodes.get(indexedLineEnd[j])[0], 
@@ -39,11 +46,28 @@ public class Dijkstras {
                     Integer.parseInt(this.files.nodes.get(indexedLineEnd[j])[1]), 
                     Integer.parseInt(this.files.nodes.get(indexedLineEnd[j])[2])
                 );
+                //System.out.println(temp2.getIndex());
                 temp.add(createTree(temp2));
             }
         }
         tree.setNextNode(temp);
         return tree;
+    }
+
+    public void printTree(DijkstrasNodeTree tree){
+        System.out.println((tree.getIndex()+1) + " " + tree.hasNextNode());
+        if (tree.hasNextNode()){
+            System.out.println("node: " + (tree.getIndex()+1));
+            for (int i = 0; i < tree.getNextNode().size(); i++){
+                System.out.println("child: " + (tree.getNextNode().get(i).getIndex()+1));
+            }
+            for (int i = 0; i < tree.getNextNode().size(); i++){
+                if (!tree.getNextNode().get(i).getVisited()){
+                    printTree(tree.getNextNode().get(i));
+                }
+            }
+            tree.setVisited(true);
+        }
     }
 
     public void indexData(){
@@ -65,7 +89,6 @@ public class Dijkstras {
 
     public void createPanel(){
         this.graphicsPanel = new GraphicsPanel();
-        indexData();
         for (int i = 0; i < this.files.nodes.size(); i++){
             graphicsPanel.addNode(Integer.parseInt(this.files.nodes.get(i)[1]), Integer.parseInt(this.files.nodes.get(i)[2]));
         }
