@@ -14,7 +14,17 @@ public class Dijkstras {
     public Dijkstras(){
         importData();
         createPanel();
+        this.startNode = new DijkstrasNode(files.nodes.get(0)[0], 
+            0, 
+            Integer.parseInt(files.nodes.get(0)[1]), 
+            Integer.parseInt(files.nodes.get(0)[2]));
+        this.endNode = new DijkstrasNode(files.nodes.get(files.nodes.size()-1)[0], 
+            files.nodes.size()-1, 
+            Integer.parseInt(files.nodes.get(files.nodes.size()-1)[1]), 
+            Integer.parseInt(files.nodes.get(files.nodes.size()-1)[2]));
     }
+
+    
 
     public void calculateDistance(DijkstrasNode node, DijkstrasNode node2){
         if (node.hasNextNode()){
@@ -55,7 +65,7 @@ public class Dijkstras {
     }
 
     public void printTree(DijkstrasNodeTree tree){
-        System.out.println((tree.getIndex()+1) + " " + tree.hasNextNode());
+        //System.out.println((tree.getIndex()+1) + " " + tree.hasNextNode());
         if (tree.hasNextNode()){
             System.out.println("node: " + (tree.getIndex()+1));
             for (int i = 0; i < tree.getNextNode().size(); i++){
@@ -81,7 +91,7 @@ public class Dijkstras {
                 }else if (files.nodes.get(i)[0].equals(files.lines.get(j)[1])){
                     indexedLineEnd[j] = i;
                 }
-            } 
+            }
             weights[i] = Integer.parseInt(files.lines.get(i)[2]);
         } 
 
@@ -100,5 +110,21 @@ public class Dijkstras {
 
     public GraphicsPanel getGraphicsPanel() {
         return graphicsPanel;
+    }
+
+    public void setStartNode(DijkstrasNode startNode) {
+        this.startNode = startNode;
+    }
+
+    public DijkstrasNode getStartNode() {
+        return startNode;
+    }
+
+    public void setEndNode(DijkstrasNode endNode) {
+        this.endNode = endNode;
+    }
+
+    public DijkstrasNode getEndNode() {
+        return endNode;
     }
 }

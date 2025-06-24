@@ -61,6 +61,10 @@ public class DijkstrasNodeTree {
         this.nodeName = name;
     }
 
+    public String getNodeName(){
+        return this.nodeName;
+    }
+
     public void setVisited(boolean bool){
         this.visited = bool;
     }

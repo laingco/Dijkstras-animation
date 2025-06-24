@@ -52,4 +52,23 @@ public class FileEditor {
             System.out.println(lines.get(i)[0] + ", " + lines.get(i)[1] + ", " + lines.get(i)[2]);
         }
     }
+
+    public void saveData(ArrayList<String[]> nodes, ArrayList<String[]> lines){
+        try {
+            PrintWriter writer = new PrintWriter(new File("src/graphData.csv"));
+            writer.println(nodes.size());
+            for (int i = 0; i < nodes.size(); i++) {
+                String[] node = nodes.get(i);
+                writer.println(String.join(",", node));
+            }
+            writer.println(lines.size());
+            for (int i = 0; i < lines.size(); i++) {
+                String[] line = lines.get(i);
+                writer.println(String.join(",", line));
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

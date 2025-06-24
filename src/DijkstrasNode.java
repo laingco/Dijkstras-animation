@@ -1,5 +1,6 @@
 public class DijkstrasNode {
     private DijkstrasNode nextNode;
+    private DijkstrasNode previousNode;
     private double nextNodeDistance;
     private int nodeX;
     private int nodeY;
@@ -23,7 +24,8 @@ public class DijkstrasNode {
         this.nodeIndex = index;
     }
 
-    public DijkstrasNode(String name, int xPos, int yPos, DijkstrasNode nextNode, double nextDist){
+    public DijkstrasNode(String name, int xPos, int yPos, DijkstrasNode nextNode, double nextDist, DijkstrasNode previousNode){
+        this.previousNode = previousNode;
         this.nextNode = nextNode;
         this.nextNodeDistance = nextDist;
         this.nodeName = name;
@@ -33,6 +35,7 @@ public class DijkstrasNode {
 
     public void setNextNode(DijkstrasNode node){
         this.nextNode = node;
+        this.nextNodeDistance = Integer.MAX_VALUE;
     }
 
     public DijkstrasNode getNextNode(){
@@ -61,5 +64,33 @@ public class DijkstrasNode {
 
     public void setNodeName(String name){
         this.nodeName = name;
+    }
+
+    public String getNodeName(){
+        return this.nodeName;
+    }
+
+    public int getIndex(){
+        return this.nodeIndex;
+    }
+
+    public double getNextNodeDistance(){
+        return this.nextNodeDistance;
+    }
+
+    public boolean getVisited(){
+        return this.visited;
+    }
+
+    public void setVisited(boolean visited){
+        this.visited = visited;
+    }
+
+    public DijkstrasNode getPreviousNode() {
+        return previousNode;
+    }
+
+    public void setPreviousNode(DijkstrasNode previousNode) {
+        this.previousNode = previousNode;
     }
 }
