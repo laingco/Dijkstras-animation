@@ -1,7 +1,9 @@
+import java.util.ArrayList;
+
 public class DijkstrasNode {
-    private DijkstrasNode nextNode;
+    private ArrayList<DijkstrasNode> nextNode;
     private DijkstrasNode previousNode;
-    private double nextNodeDistance;
+    private double distanceFromStart;
     private int nodeX;
     private int nodeY;
     private String nodeName;
@@ -10,13 +12,13 @@ public class DijkstrasNode {
     
     public DijkstrasNode(){
         this.nextNode = null;
-        this.nextNodeDistance = Integer.MAX_VALUE;
+        this.distanceFromStart = Integer.MAX_VALUE;
         this.visited = false;
     }
 
     public DijkstrasNode(String name, int index, int xPos, int yPos){
         this.nextNode = null;
-        this.nextNodeDistance = Integer.MAX_VALUE;
+        this.distanceFromStart = Integer.MAX_VALUE;
         this.nodeName = name;
         this.nodeX = xPos;
         this.nodeY = yPos;
@@ -24,21 +26,21 @@ public class DijkstrasNode {
         this.nodeIndex = index;
     }
 
-    public DijkstrasNode(String name, int xPos, int yPos, DijkstrasNode nextNode, double nextDist, DijkstrasNode previousNode){
+    public DijkstrasNode(String name, int xPos, int yPos, ArrayList<DijkstrasNode> nextNode, double nextDist, DijkstrasNode previousNode){
         this.previousNode = previousNode;
         this.nextNode = nextNode;
-        this.nextNodeDistance = nextDist;
+        this.distanceFromStart = nextDist;
         this.nodeName = name;
         this.nodeX = xPos;
         this.nodeY = yPos;
     }
 
-    public void setNextNode(DijkstrasNode node){
+    public void setNextNode(ArrayList<DijkstrasNode> node){
         this.nextNode = node;
-        this.nextNodeDistance = Integer.MAX_VALUE;
+        this.distanceFromStart = Integer.MAX_VALUE;
     }
 
-    public DijkstrasNode getNextNode(){
+    public ArrayList<DijkstrasNode> getNextNode(){
         return this.nextNode;
     }
 
@@ -58,8 +60,8 @@ public class DijkstrasNode {
         return this.nodeY;
     }
 
-    public void setNextNodeDistance(double distance){
-        this.nextNodeDistance = distance;
+    public void setDistanceFromStart(double distance){
+        this.distanceFromStart = distance;
     }
 
     public void setNodeName(String name){
@@ -74,8 +76,8 @@ public class DijkstrasNode {
         return this.nodeIndex;
     }
 
-    public double getNextNodeDistance(){
-        return this.nextNodeDistance;
+    public double getDistanceFromStart(){
+        return this.distanceFromStart;
     }
 
     public boolean getVisited(){

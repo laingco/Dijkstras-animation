@@ -9,11 +9,43 @@ public class Dijkstras {
     GraphicsPanel graphicsPanel;
     private DijkstrasNode startNode;
     private DijkstrasNode endNode;
-    private DijkstrasNodeTree dijkstrasTree;
+    //private DijkstrasNodeTree dijkstrasTree;
 
     public Dijkstras(){
         importData();
         createPanel();
+    }
+
+    public void runDijkstras(){
+        ArrayList<DijkstrasNode> unvisitedNodes = new ArrayList<DijkstrasNode>();
+        for (int i = 0; i < this.files.nodes.size(); i++){
+            unvisitedNodes.add(new DijkstrasNode(
+                this.files.nodes.get(i)[0],
+                i,
+                Integer.parseInt(this.files.nodes.get(i)[1]),
+                Integer.parseInt(this.files.nodes.get(i)[2])
+            ));
+        }
+        DijkstrasNode currentNode = startNode;
+        currentNode.setDistanceFromStart(0);
+        unvisitedNodes.remove(currentNode);
+
+        while (currentNode.hasNextNode()){
+            
+        }
+    }
+
+    public void calculateDistance(DijkstrasNode node, DijkstrasNode node2){
+        if (node.hasNextNode()){
+            double distance;
+            distance = Math.sqrt(Math.pow((node.getNodeX()-node2.getNodeX()),2) + Math.pow((node.getNodeY()-node2.getNodeY()),2));
+            node.setDistanceFromStart(distance);
+        }
+    }
+
+    public void importData(){
+        this.files = new FileEditor();
+        indexData();
         this.startNode = new DijkstrasNode(files.nodes.get(0)[0], 
             0, 
             Integer.parseInt(files.nodes.get(0)[1]), 
@@ -22,35 +54,15 @@ public class Dijkstras {
             files.nodes.size()-1, 
             Integer.parseInt(files.nodes.get(files.nodes.size()-1)[1]), 
             Integer.parseInt(files.nodes.get(files.nodes.size()-1)[2]));
+        this.startNode = createTree(startNode);
+        printTree(this.startNode);
     }
 
-    
-
-    public void calculateDistance(DijkstrasNode node, DijkstrasNode node2){
-        if (node.hasNextNode()){
-            double distance;
-            distance = Math.sqrt(Math.pow((node.getNodeX()-node2.getNodeX()),2) + Math.pow((node.getNodeY()-node2.getNodeY()),2));
-            node.setNextNodeDistance(distance);
-        }
-    }
-
-    public void importData(){
-        this.files = new FileEditor();
-        indexData();
-        this.dijkstrasTree = createTree(new DijkstrasNodeTree(
-            this.files.nodes.get(0)[0], 
-            0, 
-            Integer.parseInt(this.files.nodes.get(0)[1]), 
-            Integer.parseInt(this.files.nodes.get(0)[2])
-        ));
-        printTree(this.dijkstrasTree);
-    }
-
-    public DijkstrasNodeTree createTree(DijkstrasNodeTree tree){
-        ArrayList<DijkstrasNodeTree> temp = new ArrayList<DijkstrasNodeTree>();
+    public DijkstrasNode createTree(DijkstrasNode tree){
+        ArrayList<DijkstrasNode> temp = new ArrayList<DijkstrasNode>();
         for (int j = 0; j < this.files.lines.size(); j++){
             if (this.indexedLineStart[j] == tree.getIndex()){
-                DijkstrasNodeTree temp2 = new DijkstrasNodeTree(
+                DijkstrasNode temp2 = new DijkstrasNode(
                     this.files.nodes.get(indexedLineEnd[j])[0], 
                     indexedLineEnd[j], 
                     Integer.parseInt(this.files.nodes.get(indexedLineEnd[j])[1]), 
@@ -64,7 +76,7 @@ public class Dijkstras {
         return tree;
     }
 
-    public void printTree(DijkstrasNodeTree tree){
+    public void printTree(DijkstrasNode tree){
         //System.out.println((tree.getIndex()+1) + " " + tree.hasNextNode());
         if (tree.hasNextNode()){
             System.out.println("node: " + (tree.getIndex()+1));
@@ -113,7 +125,7 @@ public class Dijkstras {
     }
 
     public void setStartNode(DijkstrasNode startNode) {
-        this.startNode = startNode;
+        this.startNode = createTree(startNode);
     }
 
     public DijkstrasNode getStartNode() {
