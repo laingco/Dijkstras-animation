@@ -25,21 +25,27 @@ public class Dijkstras {
                 Integer.parseInt(this.files.nodes.get(i)[1]),
                 Integer.parseInt(this.files.nodes.get(i)[2])
             ));
+            unvisitedNodes.get(i).setDistanceFromStart(Integer.MAX_VALUE);
         }
         DijkstrasNode currentNode = startNode;
         currentNode.setDistanceFromStart(0);
         unvisitedNodes.remove(currentNode);
 
         while (currentNode.hasNextNode()){
-            
+           for (int i = 0; i < currentNode.getNextNode().size(); i++){
+                DijkstrasNode otherNode = currentNode.getNextNode().get(i);
+                otherNode.setDistanceFromStart(currentNode.getDistanceFromStart() + calculateDistance(otherNode, currentNode));
+           } 
         }
     }
 
-    public void calculateDistance(DijkstrasNode node, DijkstrasNode node2){
+    public double calculateDistance(DijkstrasNode node, DijkstrasNode node2){
         if (node.hasNextNode()){
             double distance;
             distance = Math.sqrt(Math.pow((node.getNodeX()-node2.getNodeX()),2) + Math.pow((node.getNodeY()-node2.getNodeY()),2));
-            node.setDistanceFromStart(distance);
+            return distance;
+        }else {
+            return 0;
         }
     }
 
