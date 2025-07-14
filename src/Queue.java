@@ -2,31 +2,27 @@ import java.util.ArrayList;
 
 public class Queue {
     private ArrayList<DijkstrasNode> list;
-    private int front;
-    private int rear;
+    private DijkstrasNode front;
+    private DijkstrasNode rear;
 
     public Queue() {
         list = new ArrayList<>();
-        front = 0;
-        rear = 0;
+        front = null;
+        rear = null;
     }
 
     public void enqueue(DijkstrasNode item) {
         list.add(item);
-        rear++;
+        rear = item;
     }
 
     public DijkstrasNode dequeue() {
         if (isEmpty()) {
             return null;
         }
-        DijkstrasNode item = list.get(front);
-        front++;
-        if (front > list.size() / 2) {
-            list = new ArrayList<>(list.subList(front, rear));
-            rear = rear - front;
-            front = 0;
-        }
+        DijkstrasNode item = list.get(0);
+        list.remove(front);
+        front = list.get(0);
         return item;
     }
 
@@ -38,6 +34,6 @@ public class Queue {
         if (isEmpty()) {
             return null;
         }
-        return list.get(front);
+        return list.get(0);
     }
 }

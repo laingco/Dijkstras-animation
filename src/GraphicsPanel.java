@@ -55,7 +55,7 @@ public class GraphicsPanel extends JPanel {
     }
 
     public void addLine(int startIndex, int endIndex){
-        System.out.println(startIndex+" "+endIndex);
+        //System.out.println(startIndex+" "+endIndex);
         int x1 = this.nodeData.get(startIndex)[0];
         int y1 = this.nodeData.get(startIndex)[1];
         int x2 = this.nodeData.get(endIndex)[0];

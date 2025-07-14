@@ -34,9 +34,11 @@ public class GUI extends JFrame implements ActionListener{
 
         createMenuBar();
 
+        dijkstras.runDijkstras();
+
         graphicsPanel = dijkstras.getGraphicsPanel();
         
-        dijkstras.files.printData();
+        //dijkstras.files.printData();
 
         this.getContentPane().add(this.graphicsPanel, BorderLayout.CENTER);
         this.setVisible(true);

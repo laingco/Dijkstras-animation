@@ -17,24 +17,11 @@ public class Dijkstras {
     }
 
     public void runDijkstras(){
-        ArrayList<DijkstrasNode> allNodes = new ArrayList<>();
-        for (int i = 0; i < this.files.nodes.size(); i++) {
-            DijkstrasNode node = new DijkstrasNode(
-                this.files.nodes.get(i)[0],
-                i,
-                Integer.parseInt(this.files.nodes.get(i)[1]),
-                Integer.parseInt(this.files.nodes.get(i)[2])
-            );
-            node.setDistanceFromStart(Double.MAX_VALUE);
-            node.setVisited(false);
-            allNodes.add(node);
-        }
-
-        DijkstrasNode start = allNodes.get(0);
-        start.setDistanceFromStart(0);
+        System.out.println("run dijkstras");
+        startNode.setDistanceFromStart(0);
 
         Queue queue = new Queue();
-        queue.enqueue(start);
+        queue.enqueue(startNode);
 
         while (!queue.isEmpty()) {
             DijkstrasNode currentNode = queue.dequeue();
@@ -44,6 +31,7 @@ public class Dijkstras {
                         DijkstrasNode nextNode = currentNode.getNextNode().get(i);
                         double newDist = currentNode.getDistanceFromStart() + calculateDistance(currentNode, nextNode);
                         if (newDist < nextNode.getDistanceFromStart()) {
+                            System.out.println("Updated distance for node " + (nextNode.getIndex() + 1) + ": " + newDist);
                             nextNode.setDistanceFromStart(newDist);
                             nextNode.setPreviousNode(currentNode);
                             queue.enqueue(nextNode);
@@ -77,7 +65,7 @@ public class Dijkstras {
             Integer.parseInt(files.nodes.get(files.nodes.size()-1)[1]), 
             Integer.parseInt(files.nodes.get(files.nodes.size()-1)[2]));
         this.startNode = createTree(startNode);
-        printTree(this.startNode);
+        //printTree(this.startNode);
     }
 
     public DijkstrasNode createTree(DijkstrasNode tree){
@@ -90,7 +78,8 @@ public class Dijkstras {
                     Integer.parseInt(this.files.nodes.get(indexedLineEnd[j])[1]), 
                     Integer.parseInt(this.files.nodes.get(indexedLineEnd[j])[2])
                 );
-                //System.out.println(temp2.getIndex());
+                temp2.setDistanceFromStart(Double.MAX_VALUE);
+                temp2.setVisited(false);
                 temp.add(createTree(temp2));
             }
         }
