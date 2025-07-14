@@ -17,25 +17,41 @@ public class Dijkstras {
     }
 
     public void runDijkstras(){
-        ArrayList<DijkstrasNode> unvisitedNodes = new ArrayList<DijkstrasNode>();
-        for (int i = 0; i < this.files.nodes.size(); i++){
-            unvisitedNodes.add(new DijkstrasNode(
+        ArrayList<DijkstrasNode> allNodes = new ArrayList<>();
+        for (int i = 0; i < this.files.nodes.size(); i++) {
+            DijkstrasNode node = new DijkstrasNode(
                 this.files.nodes.get(i)[0],
                 i,
                 Integer.parseInt(this.files.nodes.get(i)[1]),
                 Integer.parseInt(this.files.nodes.get(i)[2])
-            ));
-            unvisitedNodes.get(i).setDistanceFromStart(Integer.MAX_VALUE);
+            );
+            node.setDistanceFromStart(Double.MAX_VALUE);
+            node.setVisited(false);
+            allNodes.add(node);
         }
-        DijkstrasNode currentNode = startNode;
-        currentNode.setDistanceFromStart(0);
-        unvisitedNodes.remove(currentNode);
 
-        while (currentNode.hasNextNode()){
-           for (int i = 0; i < currentNode.getNextNode().size(); i++){
-                DijkstrasNode otherNode = currentNode.getNextNode().get(i);
-                otherNode.setDistanceFromStart(currentNode.getDistanceFromStart() + calculateDistance(otherNode, currentNode));
-           } 
+        DijkstrasNode start = allNodes.get(0);
+        start.setDistanceFromStart(0);
+
+        Queue queue = new Queue();
+        queue.enqueue(start);
+
+        while (!queue.isEmpty()) {
+            DijkstrasNode currentNode = queue.dequeue();
+            if (!currentNode.getVisited()) {
+                if (currentNode.getNextNode() != null) {
+                    for (int i = 0; i < currentNode.getNextNode().size(); i++) {
+                        DijkstrasNode nextNode = currentNode.getNextNode().get(i);
+                        double newDist = currentNode.getDistanceFromStart() + calculateDistance(currentNode, nextNode);
+                        if (newDist < nextNode.getDistanceFromStart()) {
+                            nextNode.setDistanceFromStart(newDist);
+                            nextNode.setPreviousNode(currentNode);
+                            queue.enqueue(nextNode);
+                        }
+                    }
+                }
+                currentNode.setVisited(true);
+            }
         }
     }
 
