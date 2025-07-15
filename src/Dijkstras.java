@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Dijkstras {
     //may make private
@@ -9,7 +11,6 @@ public class Dijkstras {
     GraphicsPanel graphicsPanel;
     private DijkstrasNode startNode;
     private DijkstrasNode endNode;
-    //private DijkstrasNodeTree dijkstrasTree;
 
     public Dijkstras(){
         importData();
@@ -41,6 +42,7 @@ public class Dijkstras {
                 currentNode.setVisited(true);
             }
         }
+        System.out.println("Dijkstra's algorithm completed.");
     }
 
     public double calculateDistance(DijkstrasNode node, DijkstrasNode node2){
@@ -56,35 +58,33 @@ public class Dijkstras {
     public void importData(){
         this.files = new FileEditor();
         indexData();
-        this.startNode = new DijkstrasNode(files.nodes.get(0)[0], 
-            0, 
-            Integer.parseInt(files.nodes.get(0)[1]), 
-            Integer.parseInt(files.nodes.get(0)[2]));
-        this.endNode = new DijkstrasNode(files.nodes.get(files.nodes.size()-1)[0], 
-            files.nodes.size()-1, 
-            Integer.parseInt(files.nodes.get(files.nodes.size()-1)[1]), 
-            Integer.parseInt(files.nodes.get(files.nodes.size()-1)[2]));
-        this.startNode = createTree(startNode);
-        //printTree(this.startNode);
+        Map<Integer, DijkstrasNode> nodeMap = new HashMap<>();
+        this.startNode = createTree(0, nodeMap);
+        this.endNode = nodeMap.get(files.nodes.size() - 1);
     }
 
-    public DijkstrasNode createTree(DijkstrasNode tree){
-        ArrayList<DijkstrasNode> temp = new ArrayList<DijkstrasNode>();
-        for (int j = 0; j < this.files.lines.size(); j++){
-            if (this.indexedLineStart[j] == tree.getIndex()){
-                DijkstrasNode temp2 = new DijkstrasNode(
-                    this.files.nodes.get(indexedLineEnd[j])[0], 
-                    indexedLineEnd[j], 
-                    Integer.parseInt(this.files.nodes.get(indexedLineEnd[j])[1]), 
-                    Integer.parseInt(this.files.nodes.get(indexedLineEnd[j])[2])
-                );
-                temp2.setDistanceFromStart(Double.MAX_VALUE);
-                temp2.setVisited(false);
-                temp.add(createTree(temp2));
+    public DijkstrasNode createTree(int nodeIndex, Map<Integer, DijkstrasNode> nodeMap) {
+        if (nodeMap.containsKey(nodeIndex)) {
+            return nodeMap.get(nodeIndex);
+        }
+        String name = files.nodes.get(nodeIndex)[0];
+        int x = Integer.parseInt(files.nodes.get(nodeIndex)[1]);
+        int y = Integer.parseInt(files.nodes.get(nodeIndex)[2]);
+        DijkstrasNode node = new DijkstrasNode(name, nodeIndex, x, y);
+        node.setDistanceFromStart(Double.MAX_VALUE);
+        node.setVisited(false);
+        nodeMap.put(nodeIndex, node);
+
+        ArrayList<DijkstrasNode> temp = new ArrayList<>();
+        for (int j = 0; j < this.files.lines.size(); j++) {
+            if (this.indexedLineStart[j] == nodeIndex) {
+                int childIndex = this.indexedLineEnd[j];
+                DijkstrasNode child = createTree(childIndex, nodeMap);
+                temp.add(child);
             }
         }
-        tree.setNextNode(temp);
-        return tree;
+        node.setNextNode(temp);
+        return node;
     }
 
     public void printTree(DijkstrasNode tree){
@@ -136,7 +136,12 @@ public class Dijkstras {
     }
 
     public void setStartNode(DijkstrasNode startNode) {
-        this.startNode = createTree(startNode);
+        if (startNode == null) {
+            this.startNode = null;
+            return;
+        }
+        Map<Integer, DijkstrasNode> nodeMap = new HashMap<>();
+        this.startNode = createTree(startNode.getIndex(), nodeMap);
     }
 
     public DijkstrasNode getStartNode() {
