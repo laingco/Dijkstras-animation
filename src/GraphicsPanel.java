@@ -4,8 +4,8 @@ import java.awt.geom.*;
 import java.util.ArrayList;
 
 public class GraphicsPanel extends JPanel {
-    ArrayList<int[]> nodeData = new ArrayList<int[]>();
-    ArrayList<int[]> lineData = new ArrayList<int[]>();
+    ArrayList<int[]> nodeData = new ArrayList<int[]>(); // (x, y, index, color)
+    ArrayList<int[]> lineData = new ArrayList<int[]>(); // (x1, y1, x2, y2 index, color)
     double nodeRadius = 12.5;
 
     public GraphicsPanel() {
