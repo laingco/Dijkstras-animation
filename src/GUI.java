@@ -16,6 +16,8 @@ public class GUI extends JFrame implements ActionListener{
     private JMenuItem fileMenuSave;
     private JMenuItem fileMenuSaveAs;
     private JMenuItem fileMenuOpen;
+    private JMenuItem fileMenuRun;
+    private JMenuItem fileMenuExit;
     private int SCREEN_WIDTH;
     private int SCREEN_HEIGHT;
     private Dijkstras dijkstras;
@@ -40,7 +42,8 @@ public class GUI extends JFrame implements ActionListener{
 
         this.getContentPane().add(this.graphicsPanel, BorderLayout.CENTER);
         this.setVisible(true);
-        dijkstras.runDijkstras();
+        //dijkstras.runDijkstras();
+        //dijkstras.printShortestPath();
     }
 
     public void createMenuBar(){
@@ -53,9 +56,14 @@ public class GUI extends JFrame implements ActionListener{
         this.fileMenuSave = new JMenuItem("Save");
         this.fileMenuSaveAs = new JMenuItem("Save As");
         this.fileMenuOpen = new JMenuItem("Open");
+        this.fileMenuRun = new JMenuItem("Run Dijkstra's");
+        this.fileMenuExit = new JMenuItem("Exit");
 
         this.editMenuStartItems = new JRadioButtonMenuItem[dijkstras.files.nodes.size()];
         this.editMenuEndItems = new JRadioButtonMenuItem[dijkstras.files.nodes.size()];
+
+        this.fileMenuRun.addActionListener(this);
+        this.fileMenuExit.addActionListener(this);
 
         ButtonGroup startGroup = new ButtonGroup();
         ButtonGroup endGroup = new ButtonGroup();
@@ -77,6 +85,8 @@ public class GUI extends JFrame implements ActionListener{
         fileMenu.add(fileMenuSave);
         fileMenu.add(fileMenuSaveAs);
         fileMenu.add(fileMenuOpen);
+        fileMenu.add(fileMenuRun);
+        fileMenu.add(fileMenuExit);
         menuBar.add(fileMenu);
 
         for (int i = 0; i < dijkstras.files.nodes.size(); i++){
@@ -91,24 +101,22 @@ public class GUI extends JFrame implements ActionListener{
     }
 
     public void actionPerformed(ActionEvent e) {
-        JRadioButtonMenuItem item = (JRadioButtonMenuItem)e.getSource();
-        System.out.println(item.getSelectedObjects()[0].toString());
+        //JRadioButtonMenuItem item = (JRadioButtonMenuItem)e.getSource();
+        //System.out.println(item.getSelectedObjects()[0].toString());
         for (int i = 0; i < dijkstras.files.nodes.size(); i++){
-            if (item == this.editMenuStartItems[i]){
-                dijkstras.setStartNode(new DijkstrasNode(
-                    dijkstras.files.nodes.get(i)[0],
-                    i,
-                    Integer.parseInt(dijkstras.files.nodes.get(i)[1]),
-                    Integer.parseInt(dijkstras.files.nodes.get(i)[2])
-                ));
-            } else if (item == this.editMenuEndItems[i]) {
-                dijkstras.setEndNode(new DijkstrasNode(
-                    dijkstras.files.nodes.get(i)[0],
-                    i,
-                    Integer.parseInt(dijkstras.files.nodes.get(i)[1]),
-                    Integer.parseInt(dijkstras.files.nodes.get(i)[2])
-                ));
+            if (e.getSource() == this.editMenuStartItems[i]){
+                this.dijkstras.setStartNode(dijkstras.getNodeMap().get(i));
+                System.out.println("Start node set to: " + dijkstras.getNodeMap().get(i).getNodeName());
+            } else if (e.getSource() == this.editMenuEndItems[i]) {
+                this.dijkstras.setEndNode(dijkstras.getNodeMap().get(i));
+                System.out.println("End node set to: " + dijkstras.getNodeMap().get(i).getNodeName());
             }
+        }
+        if (e.getSource() == this.fileMenuRun) {
+            this.dijkstras.runDijkstras();
+            this.dijkstras.printShortestPath();
+        } else if (e.getSource() == this.fileMenuExit) {
+            System.exit(0);
         }
     }
 }

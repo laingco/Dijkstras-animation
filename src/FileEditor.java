@@ -35,7 +35,7 @@ public class FileEditor {
         for (int i = 1; i < this.nodeCount+1; i++){
             this.nodes.add(input.get(i));
         }
-        for (int i = nodeCount+2; i < input.size(); i++){
+        for (int i = nodeCount+2; i < nodeCount+lineCount+2; i++){
             this.lines.add(input.get(i));
         }
     }

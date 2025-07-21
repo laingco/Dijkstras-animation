@@ -11,6 +11,7 @@ public class Dijkstras {
     GraphicsPanel graphicsPanel;
     private DijkstrasNode startNode;
     private DijkstrasNode endNode;
+    private Map<Integer, DijkstrasNode> nodeMap;
 
     public Dijkstras(){
         importData();
@@ -45,6 +46,23 @@ public class Dijkstras {
         System.out.println("Dijkstra's algorithm completed.");
     }
 
+    public void printShortestPath() {
+        DijkstrasNode currentNode = endNode;
+        ArrayList<DijkstrasNode> path = new ArrayList<>();
+
+        int i = 0;
+        while (currentNode != null) {
+            path.add(i, currentNode);
+            currentNode = currentNode.getPreviousNode();
+            i++;
+        }
+
+        for (int j = path.size()-1; j >= 0; j--) {
+            System.out.print(path.get(j).getNodeName() + " (" + Math.floor(path.get(j).getDistanceFromStart()) + ") --> " );
+        }
+        System.out.println("Done");
+    }
+
     public double calculateDistance(DijkstrasNode node, DijkstrasNode node2){
         if (node.hasNextNode()){
             double distance;
@@ -58,14 +76,14 @@ public class Dijkstras {
     public void importData(){
         this.files = new FileEditor();
         indexData();
-        Map<Integer, DijkstrasNode> nodeMap = new HashMap<>();
-        this.startNode = createTree(0, nodeMap);
-        this.endNode = nodeMap.get(files.nodes.size() - 1);
+        this.nodeMap = new HashMap<>();
+        this.startNode = createTree(0);
+        this.endNode = this.nodeMap.get(files.nodes.size() - 1);
     }
 
-    public DijkstrasNode createTree(int nodeIndex, Map<Integer, DijkstrasNode> nodeMap) {
-        if (nodeMap.containsKey(nodeIndex)) {
-            return nodeMap.get(nodeIndex);
+    public DijkstrasNode createTree(int nodeIndex) {
+        if (this.nodeMap.containsKey(nodeIndex)) {
+            return this.nodeMap.get(nodeIndex);
         }
         String name = files.nodes.get(nodeIndex)[0];
         int x = Integer.parseInt(files.nodes.get(nodeIndex)[1]);
@@ -73,13 +91,13 @@ public class Dijkstras {
         DijkstrasNode node = new DijkstrasNode(name, nodeIndex, x, y);
         node.setDistanceFromStart(Double.MAX_VALUE);
         node.setVisited(false);
-        nodeMap.put(nodeIndex, node);
+        this.nodeMap.put(nodeIndex, node);
 
         ArrayList<DijkstrasNode> temp = new ArrayList<>();
         for (int j = 0; j < this.files.lines.size(); j++) {
             if (this.indexedLineStart[j] == nodeIndex) {
                 int childIndex = this.indexedLineEnd[j];
-                DijkstrasNode child = createTree(childIndex, nodeMap);
+                DijkstrasNode child = createTree(childIndex);
                 temp.add(child);
             }
         }
@@ -140,8 +158,8 @@ public class Dijkstras {
             this.startNode = null;
             return;
         }
-        Map<Integer, DijkstrasNode> nodeMap = new HashMap<>();
-        this.startNode = createTree(startNode.getIndex(), nodeMap);
+        //this.nodeMap = new HashMap<>();
+        this.startNode = createTree(startNode.getIndex());
     }
 
     public DijkstrasNode getStartNode() {
@@ -154,5 +172,9 @@ public class Dijkstras {
 
     public DijkstrasNode getEndNode() {
         return endNode;
+    }
+
+    public Map<Integer, DijkstrasNode> getNodeMap() {
+        return this.nodeMap;
     }
 }
