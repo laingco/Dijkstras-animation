@@ -12,17 +12,25 @@ public class Dijkstras {
     private DijkstrasNode startNode;
     private DijkstrasNode endNode;
     private Map<Integer, DijkstrasNode> nodeMap;
+    private boolean startChanged;
 
     public Dijkstras(){
         importData();
         createPanel();
+        startChanged = false;
     }
 
     public void runDijkstras(){
         System.out.println("run dijkstras");
+        if (startChanged){
+            this.nodeMap = new HashMap<>();
+            this.startNode = createTree(this.startNode.getIndex());
+            System.out.println(this.startNode.getIndex());
+            this.startChanged = false;
+        }
         startNode.setDistanceFromStart(0);
 
-        Queue queue = new Queue();
+        PQueue queue = new PQueue();
         queue.enqueue(startNode);
 
         while (!queue.isEmpty()) {
@@ -99,6 +107,10 @@ public class Dijkstras {
                 int childIndex = this.indexedLineEnd[j];
                 DijkstrasNode child = createTree(childIndex);
                 temp.add(child);
+            }else if(this.indexedLineEnd[j] == nodeIndex) {
+                int childIndex = this.indexedLineStart[j];
+                DijkstrasNode child = createTree(childIndex);
+                temp.add(child);
             }
         }
         node.setNextNode(temp);
@@ -159,7 +171,8 @@ public class Dijkstras {
             return;
         }
         //this.nodeMap = new HashMap<>();
-        this.startNode = createTree(startNode.getIndex());
+        this.startNode = startNode;
+        this.startChanged = true;
     }
 
     public DijkstrasNode getStartNode() {
