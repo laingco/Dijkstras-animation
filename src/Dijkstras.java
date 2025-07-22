@@ -8,26 +8,24 @@ public class Dijkstras {
     int[] indexedLineStart;
     int[] indexedLineEnd;
     int[] weights;
+    Map<String, Integer> weightsMap;
     GraphicsPanel graphicsPanel;
     private DijkstrasNode startNode;
     private DijkstrasNode endNode;
     private Map<Integer, DijkstrasNode> nodeMap;
-    private boolean startChanged;
 
     public Dijkstras(){
         importData();
         createPanel();
-        startChanged = false;
     }
 
     public void runDijkstras(){
         System.out.println("run dijkstras");
-        if (startChanged){
-            this.nodeMap = new HashMap<>();
-            this.startNode = createTree(this.startNode.getIndex());
-            System.out.println(this.startNode.getIndex());
-            this.startChanged = false;
-        }
+        this.nodeMap = new HashMap<>();
+        this.startNode = createTree(this.startNode.getIndex());
+        System.out.println(this.startNode.getIndex());
+        this.graphicsPanel.clearLineColors();
+        
         startNode.setDistanceFromStart(0);
 
         PQueue queue = new PQueue();
@@ -37,16 +35,31 @@ public class Dijkstras {
             DijkstrasNode currentNode = queue.dequeue();
             if (!currentNode.getVisited()) {
                 if (currentNode.getNextNode() != null) {
+                    this.graphicsPanel.nodeColor(currentNode.getIndex(), 4);
                     for (int i = 0; i < currentNode.getNextNode().size(); i++) {
                         DijkstrasNode nextNode = currentNode.getNextNode().get(i);
-                        double newDist = currentNode.getDistanceFromStart() + calculateDistance(currentNode, nextNode);
+                        double newDist = currentNode.getDistanceFromStart() + calculateDistance(currentNode, nextNode)*weightsMap.get(currentNode.getNodeName() + "-" + nextNode.getNodeName());
                         if (newDist < nextNode.getDistanceFromStart()) {
                             System.out.println("Updated distance for node " + (nextNode.getIndex() + 1) + ": " + newDist);
                             nextNode.setDistanceFromStart(newDist);
                             nextNode.setPreviousNode(currentNode);
                             queue.enqueue(nextNode);
+                            //System.out.println("Distance updated");
+                        }
+                        for (int j = 0; j < this.files.lines.size()-1; j++) {
+                                if (this.indexedLineStart[j] == currentNode.getIndex() && this.indexedLineEnd[j] == nextNode.getIndex() ||
+                                    this.indexedLineEnd[j] == currentNode.getIndex() && this.indexedLineStart[j] == nextNode.getIndex()) {
+                                    this.graphicsPanel.lineColor(j, 4);
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    this.graphicsPanel.lineColor(j, 3);
+                                }
                         }
                     }
+                    this.graphicsPanel.nodeColor(currentNode.getIndex(), 3);
                 }
                 currentNode.setVisited(true);
             }
@@ -55,12 +68,23 @@ public class Dijkstras {
     }
 
     public void printShortestPath() {
-        DijkstrasNode currentNode = endNode;
+        DijkstrasNode currentNode = this.nodeMap.get(this.endNode.getIndex());
         ArrayList<DijkstrasNode> path = new ArrayList<>();
 
         int i = 0;
         while (currentNode != null) {
             path.add(i, currentNode);
+            if (currentNode.getPreviousNode() != null) {
+                int lineIndex = -1;
+                for (int j = 0; i < this.files.lines.size()-1; j++) {
+                    if (this.indexedLineStart[j] == currentNode.getIndex() && this.indexedLineEnd[j] == currentNode.getPreviousNode().getIndex() ||
+                        this.indexedLineEnd[j] == currentNode.getIndex() && this.indexedLineStart[j] == currentNode.getPreviousNode().getIndex()) {
+                        lineIndex = j;
+                        break;
+                    }
+                }
+                this.graphicsPanel.lineColor(lineIndex, 1);
+            }
             currentNode = currentNode.getPreviousNode();
             i++;
         }
@@ -137,6 +161,7 @@ public class Dijkstras {
         this.indexedLineStart = new int[files.lines.size()];
         this.indexedLineEnd = new int[files.lines.size()];
         this.weights = new int[files.lines.size()];
+        this.weightsMap = new HashMap<>();
         for (int i = 0; i < files.nodes.size(); i++){
             for (int j = 0; j < files.lines.size(); j++){
                 if (files.nodes.get(i)[0].equals(files.lines.get(j)[0])){
@@ -145,9 +170,12 @@ public class Dijkstras {
                     indexedLineEnd[j] = i;
                 }
             }
+        }
+        for (int i = 0; i < this.files.lines.size(); i++){
             weights[i] = Integer.parseInt(files.lines.get(i)[2]);
-        } 
-
+            weightsMap.put(files.lines.get(i)[0] + "-" + files.lines.get(i)[1], Integer.parseInt(files.lines.get(i)[2]));
+            weightsMap.put(files.lines.get(i)[1] + "-" + files.lines.get(i)[0], Integer.parseInt(files.lines.get(i)[2]));
+        }
     }
 
     public void createPanel(){
@@ -157,7 +185,7 @@ public class Dijkstras {
         }
 
         for (int i = 0; i < this.files.lines.size(); i++){
-            graphicsPanel.addLine(this.indexedLineStart[i], this.indexedLineEnd[i]);
+            graphicsPanel.addLine(this.indexedLineStart[i], this.indexedLineEnd[i], this.weights[i]);
         }
     }
 
@@ -172,11 +200,10 @@ public class Dijkstras {
         }
         //this.nodeMap = new HashMap<>();
         this.startNode = startNode;
-        this.startChanged = true;
     }
 
     public DijkstrasNode getStartNode() {
-        return startNode;
+        return this.startNode;
     }
 
     public void setEndNode(DijkstrasNode endNode) {
@@ -184,7 +211,7 @@ public class Dijkstras {
     }
 
     public DijkstrasNode getEndNode() {
-        return endNode;
+        return this.endNode;
     }
 
     public Map<Integer, DijkstrasNode> getNodeMap() {

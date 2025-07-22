@@ -105,16 +105,24 @@ public class GUI extends JFrame implements ActionListener{
         //System.out.println(item.getSelectedObjects()[0].toString());
         for (int i = 0; i < dijkstras.files.nodes.size(); i++){
             if (e.getSource() == this.editMenuStartItems[i]){
+                this.dijkstras.getGraphicsPanel().nodeColor(dijkstras.getStartNode().getIndex(), 3);
                 this.dijkstras.setStartNode(dijkstras.getNodeMap().get(i));
                 System.out.println("Start node set to: " + dijkstras.getNodeMap().get(i).getNodeName());
+                this.dijkstras.getGraphicsPanel().nodeColor(i, 2);
+                this.dijkstras.getGraphicsPanel().clearLineColors();
             } else if (e.getSource() == this.editMenuEndItems[i]) {
+                this.dijkstras.getGraphicsPanel().nodeColor(dijkstras.getEndNode().getIndex(), 3);
                 this.dijkstras.setEndNode(dijkstras.getNodeMap().get(i));
                 System.out.println("End node set to: " + dijkstras.getNodeMap().get(i).getNodeName());
+                this.dijkstras.getGraphicsPanel().nodeColor(i, 1);
+                this.dijkstras.getGraphicsPanel().clearLineColors();
             }
         }
         if (e.getSource() == this.fileMenuRun) {
-            this.dijkstras.runDijkstras();
-            this.dijkstras.printShortestPath();
+            new Thread(() -> {
+                this.dijkstras.runDijkstras();
+                this.dijkstras.printShortestPath();
+            }).start();
         } else if (e.getSource() == this.fileMenuExit) {
             System.exit(0);
         }
