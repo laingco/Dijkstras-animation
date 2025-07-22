@@ -25,7 +25,11 @@ public class GraphicsPanel extends JPanel {
                 this.lineData.get(i)[2] + this.nodeRadius,
                 this.lineData.get(i)[3] + this.nodeRadius
                 ));
-                g2d.setColor(Color.WHITE);
+                if (this.lineData.get(i)[5] == 3){
+                    g2d.setColor(Color.WHITE);
+                }else{
+                    g2d.setColor(Color.BLACK);
+                }
                 g2d.drawString(Integer.toString(this.lineData.get(i)[6]), 
                     (int)((this.lineData.get(i)[0] + this.lineData.get(i)[2]) / 2 + 9/(12.5/this.nodeRadius)), 
                     (int)((this.lineData.get(i)[1] + this.lineData.get(i)[3]) / 2 + 18/(14/this.nodeRadius)));
@@ -34,7 +38,11 @@ public class GraphicsPanel extends JPanel {
         for (int i = 0; i < this.nodeData.size(); i++){
             g2d.setColor(parseColor(this.nodeData.get(i)[3]));
             g2d.fillOval(this.nodeData.get(i)[0], this.nodeData.get(i)[1], (int)this.nodeRadius*2, (int)this.nodeRadius*2);
-            g2d.setColor(Color.WHITE);
+            if (this.nodeData.get(i)[3] == 3){
+                g2d.setColor(Color.WHITE);
+            }else{
+                g2d.setColor(Color.BLACK);
+            }
             g2d.drawString(Integer.toString(this.nodeData.get(i)[2]+1), (int)(this.nodeData.get(i)[0]+9/(12.5/this.nodeRadius)), (int)(this.nodeData.get(i)[1]+18/(14/this.nodeRadius)));
         }
     }
@@ -77,6 +85,13 @@ public class GraphicsPanel extends JPanel {
     public void clearLineColors() {
         for (int i = 0; i < this.lineData.size(); i++) {
             this.lineData.get(i)[5] = 3;
+        }
+        repaint();
+    }
+
+    public void clearNodeColors(){
+        for (int i = 0; i < this.nodeData.size(); i++){
+            this.nodeData.get(i)[3] = 3;
         }
         repaint();
     }

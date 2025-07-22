@@ -110,12 +110,14 @@ public class GUI extends JFrame implements ActionListener{
                 System.out.println("Start node set to: " + dijkstras.getNodeMap().get(i).getNodeName());
                 this.dijkstras.getGraphicsPanel().nodeColor(i, 2);
                 this.dijkstras.getGraphicsPanel().clearLineColors();
+                this.dijkstras.getGraphicsPanel().clearNodeColors();
             } else if (e.getSource() == this.editMenuEndItems[i]) {
                 this.dijkstras.getGraphicsPanel().nodeColor(dijkstras.getEndNode().getIndex(), 3);
                 this.dijkstras.setEndNode(dijkstras.getNodeMap().get(i));
                 System.out.println("End node set to: " + dijkstras.getNodeMap().get(i).getNodeName());
                 this.dijkstras.getGraphicsPanel().nodeColor(i, 1);
                 this.dijkstras.getGraphicsPanel().clearLineColors();
+                this.dijkstras.getGraphicsPanel().clearNodeColors();
             }
         }
         if (e.getSource() == this.fileMenuRun) {

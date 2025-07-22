@@ -12,6 +12,7 @@ public class Dijkstras {
     private DijkstrasNode startNode;
     private DijkstrasNode endNode;
     private Map<Integer, DijkstrasNode> nodeMap;
+    private Integer animationSpeed = 750;
 
     public Dijkstras(){
         importData();
@@ -24,6 +25,7 @@ public class Dijkstras {
         this.startNode = createTree(this.startNode.getIndex());
         System.out.println(this.startNode.getIndex());
         this.graphicsPanel.clearLineColors();
+        this.graphicsPanel.clearNodeColors();
         
         startNode.setDistanceFromStart(0);
 
@@ -37,30 +39,32 @@ public class Dijkstras {
                     this.graphicsPanel.nodeColor(currentNode.getIndex(), 4);
                     for (int i = 0; i < currentNode.getNextNode().size(); i++) {
                         DijkstrasNode nextNode = currentNode.getNextNode().get(i);
-                        double newDist = currentNode.getDistanceFromStart() + calculateDistance(currentNode, nextNode)*weightsMap.get(currentNode.getNodeName() + "-" + nextNode.getNodeName());
+                        double newDist = currentNode.getDistanceFromStart() + /*calculateDistance(currentNode, nextNode)*/weightsMap.get(currentNode.getNodeName() + "-" + nextNode.getNodeName());
                         if (newDist < nextNode.getDistanceFromStart()) {
                             System.out.println("Updated distance for node " + (nextNode.getIndex() + 1) + ": " + newDist);
                             nextNode.setDistanceFromStart(newDist);
                             nextNode.setPreviousNode(currentNode);
                             queue.enqueue(nextNode);
-                            //System.out.println("Distance updated");
+                            System.out.println("Queued " + (nextNode.getIndex()+1));
                         }
                         for (int j = 0; j < this.files.getLines().size()-1; j++) {
                                 if (this.indexedLineStart[j] == currentNode.getIndex() && this.indexedLineEnd[j] == nextNode.getIndex() ||
                                     this.indexedLineEnd[j] == currentNode.getIndex() && this.indexedLineStart[j] == nextNode.getIndex()) {
                                     this.graphicsPanel.lineColor(j, 4);
                                     try {
-                                        Thread.sleep(500);
+                                        Thread.sleep(animationSpeed);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    this.graphicsPanel.lineColor(j, 3);
+                                    this.graphicsPanel.lineColor(j, 6);
                                 }
                         }
+                        
                     }
                     this.graphicsPanel.nodeColor(currentNode.getIndex(), 3);
                 }
                 currentNode.setVisited(true);
+                this.graphicsPanel.nodeColor(currentNode.getIndex(), 6);
             }
         }
         System.out.println("Dijkstra's algorithm completed.");
@@ -87,6 +91,9 @@ public class Dijkstras {
             currentNode = currentNode.getPreviousNode();
             i++;
         }
+
+        this.graphicsPanel.nodeColor(startNode.getIndex(), 1);
+        this.graphicsPanel.nodeColor(endNode.getIndex(), 1);
 
         for (int j = path.size()-1; j >= 0; j--) {
             System.out.print(path.get(j).getNodeName() + " (" + Math.floor(path.get(j).getDistanceFromStart()) + ") --> " );
