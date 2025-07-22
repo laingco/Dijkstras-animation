@@ -59,8 +59,8 @@ public class GUI extends JFrame implements ActionListener{
         this.fileMenuRun = new JMenuItem("Run Dijkstra's");
         this.fileMenuExit = new JMenuItem("Exit");
 
-        this.editMenuStartItems = new JRadioButtonMenuItem[dijkstras.files.nodes.size()];
-        this.editMenuEndItems = new JRadioButtonMenuItem[dijkstras.files.nodes.size()];
+        this.editMenuStartItems = new JRadioButtonMenuItem[dijkstras.getFiles().getNodes().size()];
+        this.editMenuEndItems = new JRadioButtonMenuItem[dijkstras.getFiles().getNodes().size()];
 
         this.fileMenuRun.addActionListener(this);
         this.fileMenuExit.addActionListener(this);
@@ -68,18 +68,18 @@ public class GUI extends JFrame implements ActionListener{
         ButtonGroup startGroup = new ButtonGroup();
         ButtonGroup endGroup = new ButtonGroup();
 
-        for (int i = 0; i < dijkstras.files.nodes.size(); i++){
-            this.editMenuStartItems[i] = new JRadioButtonMenuItem(dijkstras.files.nodes.get(i)[0]);
+        for (int i = 0; i < dijkstras.getFiles().getNodes().size(); i++){
+            this.editMenuStartItems[i] = new JRadioButtonMenuItem(dijkstras.getFiles().getNodes().get(i)[0]);
             this.editMenuStartItems[i].addActionListener(this);
             startGroup.add(this.editMenuStartItems[i]);
 
-            this.editMenuEndItems[i] = new JRadioButtonMenuItem(dijkstras.files.nodes.get(i)[0]);
+            this.editMenuEndItems[i] = new JRadioButtonMenuItem(dijkstras.getFiles().getNodes().get(i)[0]);
             this.editMenuEndItems[i].addActionListener(this);
             endGroup.add(this.editMenuEndItems[i]);
         }
 
         this.editMenuStartItems[0].setSelected(true);
-        this.editMenuEndItems[dijkstras.files.nodes.size()-1].setSelected(true);
+        this.editMenuEndItems[dijkstras.getFiles().getNodes().size()-1].setSelected(true);
 
         fileMenu.add(fileMenuNew);
         fileMenu.add(fileMenuSave);
@@ -89,7 +89,7 @@ public class GUI extends JFrame implements ActionListener{
         fileMenu.add(fileMenuExit);
         menuBar.add(fileMenu);
 
-        for (int i = 0; i < dijkstras.files.nodes.size(); i++){
+        for (int i = 0; i < dijkstras.getFiles().getNodes().size(); i++){
             this.editMenuStartMenu.add(this.editMenuStartItems[i]);
             this.editMenuEndMenu.add(this.editMenuEndItems[i]);
         }
@@ -103,7 +103,7 @@ public class GUI extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         //JRadioButtonMenuItem item = (JRadioButtonMenuItem)e.getSource();
         //System.out.println(item.getSelectedObjects()[0].toString());
-        for (int i = 0; i < dijkstras.files.nodes.size(); i++){
+        for (int i = 0; i < dijkstras.getFiles().getNodes().size(); i++){
             if (e.getSource() == this.editMenuStartItems[i]){
                 this.dijkstras.getGraphicsPanel().nodeColor(dijkstras.getStartNode().getIndex(), 3);
                 this.dijkstras.setStartNode(dijkstras.getNodeMap().get(i));

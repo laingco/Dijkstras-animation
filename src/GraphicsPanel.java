@@ -4,9 +4,9 @@ import java.awt.geom.*;
 import java.util.ArrayList;
 
 public class GraphicsPanel extends JPanel {
-    ArrayList<int[]> nodeData = new ArrayList<int[]>(); // (x, y, index, color)
-    ArrayList<int[]> lineData = new ArrayList<int[]>(); // (x1, y1, x2, y2 index, color, weight)
-    double nodeRadius = 12.5;
+    private ArrayList<int[]> nodeData = new ArrayList<int[]>(); // (x, y, index, color)
+    private ArrayList<int[]> lineData = new ArrayList<int[]>(); // (x1, y1, x2, y2 index, color, weight)
+    private double nodeRadius = 12.5;
 
     public GraphicsPanel() {
         setBackground(Color.LIGHT_GRAY);               
@@ -100,5 +100,22 @@ public class GraphicsPanel extends JPanel {
             default:
                 return Color.BLACK;
         }
+    }
+
+    public ArrayList<int[]> getNodeData() {
+        return nodeData;
+    }
+
+    public ArrayList<int[]> getLineData() {
+        return lineData;
+    }
+
+    public double getNodeRadius() {
+        return nodeRadius;
+    }
+
+    public void setNodeRadius(double nodeRadius) {
+        this.nodeRadius = nodeRadius;
+        repaint();
     }
 }

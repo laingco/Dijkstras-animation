@@ -3,13 +3,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Dijkstras {
-    //may make private
-    FileEditor files;
-    int[] indexedLineStart;
-    int[] indexedLineEnd;
-    int[] weights;
-    Map<String, Integer> weightsMap;
-    GraphicsPanel graphicsPanel;
+    private FileEditor files;
+    private int[] indexedLineStart;
+    private int[] indexedLineEnd;
+    private int[] weights;
+    private Map<String, Integer> weightsMap;
+    private GraphicsPanel graphicsPanel;
     private DijkstrasNode startNode;
     private DijkstrasNode endNode;
     private Map<Integer, DijkstrasNode> nodeMap;
@@ -46,7 +45,7 @@ public class Dijkstras {
                             queue.enqueue(nextNode);
                             //System.out.println("Distance updated");
                         }
-                        for (int j = 0; j < this.files.lines.size()-1; j++) {
+                        for (int j = 0; j < this.files.getLines().size()-1; j++) {
                                 if (this.indexedLineStart[j] == currentNode.getIndex() && this.indexedLineEnd[j] == nextNode.getIndex() ||
                                     this.indexedLineEnd[j] == currentNode.getIndex() && this.indexedLineStart[j] == nextNode.getIndex()) {
                                     this.graphicsPanel.lineColor(j, 4);
@@ -76,7 +75,7 @@ public class Dijkstras {
             path.add(i, currentNode);
             if (currentNode.getPreviousNode() != null) {
                 int lineIndex = -1;
-                for (int j = 0; i < this.files.lines.size()-1; j++) {
+                for (int j = 0; i < this.files.getLines().size()-1; j++) {
                     if (this.indexedLineStart[j] == currentNode.getIndex() && this.indexedLineEnd[j] == currentNode.getPreviousNode().getIndex() ||
                         this.indexedLineEnd[j] == currentNode.getIndex() && this.indexedLineStart[j] == currentNode.getPreviousNode().getIndex()) {
                         lineIndex = j;
@@ -110,23 +109,23 @@ public class Dijkstras {
         indexData();
         this.nodeMap = new HashMap<>();
         this.startNode = createTree(0);
-        this.endNode = this.nodeMap.get(files.nodes.size() - 1);
+        this.endNode = this.nodeMap.get(files.getNodes().size() - 1);
     }
 
     public DijkstrasNode createTree(int nodeIndex) {
         if (this.nodeMap.containsKey(nodeIndex)) {
             return this.nodeMap.get(nodeIndex);
         }
-        String name = files.nodes.get(nodeIndex)[0];
-        int x = Integer.parseInt(files.nodes.get(nodeIndex)[1]);
-        int y = Integer.parseInt(files.nodes.get(nodeIndex)[2]);
+        String name = files.getNodes().get(nodeIndex)[0];
+        int x = Integer.parseInt(files.getNodes().get(nodeIndex)[1]);
+        int y = Integer.parseInt(files.getNodes().get(nodeIndex)[2]);
         DijkstrasNode node = new DijkstrasNode(name, nodeIndex, x, y);
         node.setDistanceFromStart(Double.MAX_VALUE);
         node.setVisited(false);
         this.nodeMap.put(nodeIndex, node);
 
         ArrayList<DijkstrasNode> temp = new ArrayList<>();
-        for (int j = 0; j < this.files.lines.size(); j++) {
+        for (int j = 0; j < this.files.getLines().size(); j++) {
             if (this.indexedLineStart[j] == nodeIndex) {
                 int childIndex = this.indexedLineEnd[j];
                 DijkstrasNode child = createTree(childIndex);
@@ -158,33 +157,33 @@ public class Dijkstras {
     }
 
     public void indexData(){
-        this.indexedLineStart = new int[files.lines.size()];
-        this.indexedLineEnd = new int[files.lines.size()];
-        this.weights = new int[files.lines.size()];
+        this.indexedLineStart = new int[files.getLines().size()];
+        this.indexedLineEnd = new int[files.getLines().size()];
+        this.weights = new int[files.getLines().size()];
         this.weightsMap = new HashMap<>();
-        for (int i = 0; i < files.nodes.size(); i++){
-            for (int j = 0; j < files.lines.size(); j++){
-                if (files.nodes.get(i)[0].equals(files.lines.get(j)[0])){
+        for (int i = 0; i < files.getNodes().size(); i++){
+            for (int j = 0; j < files.getLines().size(); j++){
+                if (files.getNodes().get(i)[0].equals(files.getLines().get(j)[0])){
                     indexedLineStart[j] = i;
-                }else if (files.nodes.get(i)[0].equals(files.lines.get(j)[1])){
+                }else if (files.getNodes().get(i)[0].equals(files.getLines().get(j)[1])){
                     indexedLineEnd[j] = i;
                 }
             }
         }
-        for (int i = 0; i < this.files.lines.size(); i++){
-            weights[i] = Integer.parseInt(files.lines.get(i)[2]);
-            weightsMap.put(files.lines.get(i)[0] + "-" + files.lines.get(i)[1], Integer.parseInt(files.lines.get(i)[2]));
-            weightsMap.put(files.lines.get(i)[1] + "-" + files.lines.get(i)[0], Integer.parseInt(files.lines.get(i)[2]));
+        for (int i = 0; i < this.files.getLines().size(); i++){
+            weights[i] = Integer.parseInt(files.getLines().get(i)[2]);
+            weightsMap.put(files.getLines().get(i)[0] + "-" + files.getLines().get(i)[1], Integer.parseInt(files.getLines().get(i)[2]));
+            weightsMap.put(files.getLines().get(i)[1] + "-" + files.getLines().get(i)[0], Integer.parseInt(files.getLines().get(i)[2]));
         }
     }
 
     public void createPanel(){
         this.graphicsPanel = new GraphicsPanel();
-        for (int i = 0; i < this.files.nodes.size(); i++){
-            graphicsPanel.addNode(Integer.parseInt(this.files.nodes.get(i)[1]), Integer.parseInt(this.files.nodes.get(i)[2]));
+        for (int i = 0; i < this.files.getNodes().size(); i++){
+            graphicsPanel.addNode(Integer.parseInt(this.files.getNodes().get(i)[1]), Integer.parseInt(this.files.getNodes().get(i)[2]));
         }
 
-        for (int i = 0; i < this.files.lines.size(); i++){
+        for (int i = 0; i < this.files.getLines().size(); i++){
             graphicsPanel.addLine(this.indexedLineStart[i], this.indexedLineEnd[i], this.weights[i]);
         }
     }
@@ -216,5 +215,53 @@ public class Dijkstras {
 
     public Map<Integer, DijkstrasNode> getNodeMap() {
         return this.nodeMap;
+    }
+
+    public FileEditor getFiles() {
+        return this.files;
+    }
+
+    public int[] getIndexedLineStart() {
+        return this.indexedLineStart;
+    }
+
+    public int[] getIndexedLineEnd() {
+        return this.indexedLineEnd;
+    }
+
+    public int[] getWeights() {
+        return this.weights;
+    }
+
+    public Map<String, Integer> getWeightsMap() {
+        return this.weightsMap;
+    }
+
+    public void setWeightsMap(Map<String, Integer> weightsMap) {
+        this.weightsMap = weightsMap;
+    }
+
+    public void setIndexedLineStart(int[] indexedLineStart) {
+        this.indexedLineStart = indexedLineStart;
+    }
+
+    public void setIndexedLineEnd(int[] indexedLineEnd) {
+        this.indexedLineEnd = indexedLineEnd;
+    }
+
+    public void setWeights(int[] weights) {
+        this.weights = weights;
+    }
+
+    public void setFiles(FileEditor files) {
+        this.files = files;
+    }
+
+    public void setGraphicsPanel(GraphicsPanel graphicsPanel) {
+        this.graphicsPanel = graphicsPanel;
+    }
+
+    public void setNodeMap(Map<Integer, DijkstrasNode> nodeMap) {
+        this.nodeMap = nodeMap;
     }
 }

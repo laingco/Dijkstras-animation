@@ -3,10 +3,10 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 public class FileEditor {
-    int nodeCount;
-    int lineCount;
-    ArrayList<String[]> nodes;
-    ArrayList<String[]> lines;
+    private int nodeCount;
+    private int lineCount;
+    private ArrayList<String[]> nodes;
+    private ArrayList<String[]> lines;
 
     public FileEditor(){
         parseData(getData());
@@ -70,5 +70,39 @@ public class FileEditor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<String[]> getNodes() {
+        return nodes;
+    }
+
+    public ArrayList<String[]> getLines() {
+        return lines;
+    }
+
+    public int getNodeCount() {
+        return nodeCount;
+    }
+
+    public int getLineCount() {
+        return lineCount;
+    }
+
+    public void setNodes(ArrayList<String[]> nodes) {
+        this.nodes = nodes;
+        this.nodeCount = nodes.size();
+    }
+
+    public void setLines(ArrayList<String[]> lines) {
+        this.lines = lines;
+        this.lineCount = lines.size();
+    }
+
+    public void setNodeCount(int nodeCount) {
+        this.nodeCount = nodeCount;
+    }
+
+    public void setLineCount(int lineCount) {
+        this.lineCount = lineCount;
     }
 }
