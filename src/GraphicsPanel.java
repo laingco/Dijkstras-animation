@@ -28,10 +28,8 @@ public class GraphicsPanel extends JPanel {
             this.creatingLink = true;
         });
         this.deleteNodeItem.addActionListener(e -> {
-            //int nodeIndex = isHoveringNode(this.mouseX, this.mouseY);
             if (clickedNodeIndex >= 0) {
-                this.nodeData.remove(clickedNodeIndex);
-                repaint();
+                removeNode(clickedNodeIndex);
             }
             System.out.println("Node deleted at index: " + clickedNodeIndex);
         });
@@ -60,6 +58,19 @@ public class GraphicsPanel extends JPanel {
             }
 
 
+        });
+
+        this.addMouseMotionListener(new MouseAdapter() {
+            public void mouseDragged(MouseEvent e) {
+                int nodeIndex = isHoveringNode(e.getX(), e.getY());
+                if (nodeIndex >= 0) {
+                    mouseX = e.getX();
+                    mouseY = e.getY();
+                    nodeData.get(nodeIndex)[0] = mouseX - (int)nodeRadius;
+                    nodeData.get(nodeIndex)[1] = mouseY - (int)nodeRadius;
+                    repaint();
+                }
+            }
         });
     }
 
@@ -205,5 +216,32 @@ public class GraphicsPanel extends JPanel {
 
     public void setCreatingLink(boolean creatingLink) {
         this.creatingLink = creatingLink;
+    }
+
+    public void removeNode(int index) {
+        if (index >= 0 && index < this.nodeData.size()) {
+            for (int i = 0; i < lineData.size(); i++) {
+                if (this.lineData.get(i)[0] == this.nodeData.get(index)[0] && this.lineData.get(i)[1] == this.nodeData.get(index)[1]
+                || this.lineData.get(i)[2] == this.nodeData.get(index)[0] && this.lineData.get(i)[3] == this.nodeData.get(index)[1]) {
+                    removeLine(i);
+                    System.out.println("Line removed at index: " + i);
+                }
+            }
+            this.nodeData.remove(index);
+            for (int i = 0; i < this.nodeData.size(); i++) {
+                this.nodeData.get(i)[2] = i;
+            }
+            repaint();
+        }
+    }
+
+    public void removeLine(int index) {
+        if (index >= 0 && index < this.lineData.size()) {
+            this.lineData.remove(index);
+            for (int i = 0; i < lineData.size(); i++) {
+                this.lineData.get(i)[4] = i;
+            }
+            repaint();
+        }
     }
 }
