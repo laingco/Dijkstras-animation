@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.*;
 import java.util.ArrayList;
 
@@ -7,9 +10,20 @@ public class GraphicsPanel extends JPanel {
     private ArrayList<int[]> nodeData = new ArrayList<int[]>(); // (x, y, index, color)
     private ArrayList<int[]> lineData = new ArrayList<int[]>(); // (x1, y1, x2, y2 index, color, weight)
     private double nodeRadius = 12.5;
+    private boolean creatingLink = false;
 
     public GraphicsPanel() {
-        setBackground(Color.LIGHT_GRAY);               
+        setBackground(Color.LIGHT_GRAY);
+        
+        this.addMouseListener(new MouseAdapter() {
+            public void MousePressed(MouseEvent e){
+                int nodeIndex = isHoveringNode(e.getX(), e.getY());
+
+                if (nodeIndex >= 0 && creatingLink && e.getButton() == 1){
+
+                }
+            }
+        });
     }
 
     public void paintComponent(Graphics g) {
@@ -62,6 +76,19 @@ public class GraphicsPanel extends JPanel {
         int data[] = {x1, y1, x2, y2, this.lineData.size(), 3, weight};
         this.lineData.add(data);
         repaint();
+    }
+
+    public int isHoveringNode(int x, int y){
+        for (int i = 0; i < nodeData.size(); i++){
+            double dist = Integer.MAX_VALUE;
+            
+            dist = Math.sqrt(Math.pow(x-nodeData.get(i)[0], 2) + Math.pow(y-nodeData.get(i)[1], 2));
+
+            if (dist <= nodeRadius){
+                return i;
+            }
+        }
+        return -1;
     }
 
     public void nodeColor(int index, int color){
@@ -132,5 +159,13 @@ public class GraphicsPanel extends JPanel {
     public void setNodeRadius(double nodeRadius) {
         this.nodeRadius = nodeRadius;
         repaint();
+    }
+
+    public boolean isCreatingLink() {
+        return creatingLink;
+    }
+
+    public void setCreatingLink(boolean creatingLink) {
+        this.creatingLink = creatingLink;
     }
 }

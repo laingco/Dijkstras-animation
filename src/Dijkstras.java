@@ -56,7 +56,7 @@ public class Dijkstras {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    this.graphicsPanel.lineColor(j, 6);
+                                    this.graphicsPanel.lineColor(j, 5);
                                 }
                         }
                         
@@ -64,7 +64,7 @@ public class Dijkstras {
                     this.graphicsPanel.nodeColor(currentNode.getIndex(), 3);
                 }
                 currentNode.setVisited(true);
-                this.graphicsPanel.nodeColor(currentNode.getIndex(), 6);
+                this.graphicsPanel.nodeColor(currentNode.getIndex(), 5);
             }
         }
         System.out.println("Dijkstra's algorithm completed.");
