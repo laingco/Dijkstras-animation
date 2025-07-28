@@ -13,8 +13,6 @@ public class GUI extends JFrame implements ActionListener{
     private JRadioButtonMenuItem[] editMenuStartItems;
     private JRadioButtonMenuItem[] editMenuEndItems;
     private JMenuItem editMenuNewNode;
-    private JMenuItem editMenuNewLink;
-    private JMenuItem editMenuDeleteNode;
     private JMenuItem editMenuDeleteLink;
     private JMenuItem fileMenuNew;
     private JMenuItem fileMenuSave;
@@ -57,8 +55,6 @@ public class GUI extends JFrame implements ActionListener{
         this.editMenuStartMenu = new JMenu("Start node");
         this.editMenuEndMenu = new JMenu("End node");
         this.editMenuNewNode = new JMenuItem("New Node");
-        this.editMenuNewLink = new JMenuItem("New Link");
-        this.editMenuDeleteNode = new JMenuItem("Delete Node");
         this.editMenuDeleteLink = new JMenuItem("Delete Link");
         this.fileMenuNew = new JMenuItem("New");
         this.fileMenuSave = new JMenuItem("Save");
@@ -73,8 +69,6 @@ public class GUI extends JFrame implements ActionListener{
         this.fileMenuRun.addActionListener(this);
         this.fileMenuExit.addActionListener(this);
         this.editMenuNewNode.addActionListener(this);
-        this.editMenuNewLink.addActionListener(this);
-        this.editMenuDeleteNode.addActionListener(this);
         this.editMenuDeleteLink.addActionListener(this);
 
         ButtonGroup startGroup = new ButtonGroup();
@@ -109,8 +103,6 @@ public class GUI extends JFrame implements ActionListener{
         editMenu.add(editMenuStartMenu);
         editMenu.add(editMenuEndMenu);
         editMenu.add(editMenuNewNode);
-        editMenu.add(editMenuNewLink);
-        editMenu.add(editMenuDeleteNode);
         editMenu.add(editMenuDeleteLink);
         menuBar.add(editMenu);
         this.setJMenuBar(menuBar);
@@ -144,10 +136,6 @@ public class GUI extends JFrame implements ActionListener{
         } else if (e.getSource() == this.fileMenuExit) {
             System.exit(0);
         } else if (e.getSource() == this.editMenuNewNode) {
-
-        } else if (e.getSource() == this.editMenuNewLink) {
-
-        } else if (e.getSource() == this.editMenuDeleteNode) {
 
         } else if (e.getSource() == this.editMenuDeleteLink) {
 

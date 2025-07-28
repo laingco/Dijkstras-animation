@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.geom.*;
 import java.util.ArrayList;
 
@@ -11,18 +10,56 @@ public class GraphicsPanel extends JPanel {
     private ArrayList<int[]> lineData = new ArrayList<int[]>(); // (x1, y1, x2, y2 index, color, weight)
     private double nodeRadius = 12.5;
     private boolean creatingLink = false;
+    private JPopupMenu clickMenu;
+    private JMenuItem addLinkItem;
+    private JMenuItem deleteNodeItem;
+    private int mouseX;
+    private int mouseY;
+    private int clickedNodeIndex = -1;
 
     public GraphicsPanel() {
         setBackground(Color.LIGHT_GRAY);
+
+        this.clickMenu = new JPopupMenu();
+        this.addLinkItem = new JMenuItem("Add Link");
+        this.deleteNodeItem = new JMenuItem("Delete");
+
+        this.addLinkItem.addActionListener(e -> {
+            this.creatingLink = true;
+        });
+        this.deleteNodeItem.addActionListener(e -> {
+            //int nodeIndex = isHoveringNode(this.mouseX, this.mouseY);
+            if (clickedNodeIndex >= 0) {
+                this.nodeData.remove(clickedNodeIndex);
+                repaint();
+            }
+            System.out.println("Node deleted at index: " + clickedNodeIndex);
+        });
+
+        this.clickMenu.add(addLinkItem);
+        this.clickMenu.add(deleteNodeItem);
         
         this.addMouseListener(new MouseAdapter() {
-            public void MousePressed(MouseEvent e){
+            public void mousePressed(MouseEvent e){
                 int nodeIndex = isHoveringNode(e.getX(), e.getY());
+                System.out.println("Node index: " + nodeIndex);
 
                 if (nodeIndex >= 0 && creatingLink && e.getButton() == 1){
-
+                    addLine(clickedNodeIndex, nodeIndex, 100);
+                    creatingLink = false;
+                    repaint();
                 }
+
+                if (nodeIndex >= 0 && e.getButton() == 3){
+                    clickMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+
+                mouseX = e.getX();
+                mouseY = e.getY();
+                clickedNodeIndex = isHoveringNode(mouseX, mouseY);
             }
+
+
         });
     }
 
@@ -79,10 +116,11 @@ public class GraphicsPanel extends JPanel {
     }
 
     public int isHoveringNode(int x, int y){
+        System.out.println("Checking for node at: " + x + ", " + y);
         for (int i = 0; i < nodeData.size(); i++){
             double dist = Integer.MAX_VALUE;
             
-            dist = Math.sqrt(Math.pow(x-nodeData.get(i)[0], 2) + Math.pow(y-nodeData.get(i)[1], 2));
+            dist = Math.sqrt(Math.pow(x-(nodeData.get(i)[0]+nodeRadius), 2) + Math.pow(y-(nodeData.get(i)[1]+nodeRadius), 2));
 
             if (dist <= nodeRadius){
                 return i;
