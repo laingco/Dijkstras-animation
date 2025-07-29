@@ -16,6 +16,7 @@ public class GraphicsPanel extends JPanel {
     private int mouseX;
     private int mouseY;
     private int clickedNodeIndex = -1;
+    private int draggedNodeIndex = -1;
 
     public GraphicsPanel() {
         setBackground(Color.LIGHT_GRAY);
@@ -46,9 +47,9 @@ public class GraphicsPanel extends JPanel {
                     addLine(clickedNodeIndex, nodeIndex, 100);
                     creatingLink = false;
                     repaint();
-                }
-
-                if (nodeIndex >= 0 && e.getButton() == 3){
+                } else if (nodeIndex >= 0 && e.getButton() == 1) {
+                    draggedNodeIndex = nodeIndex;
+                } else if (nodeIndex >= 0 && e.getButton() == 3){
                     clickMenu.show(e.getComponent(), e.getX(), e.getY());
                 }
 
@@ -57,17 +58,21 @@ public class GraphicsPanel extends JPanel {
                 clickedNodeIndex = isHoveringNode(mouseX, mouseY);
             }
 
-
+            public void mouseReleased(MouseEvent e) {
+                if (draggedNodeIndex >= 0) {
+                    draggedNodeIndex = -1;
+                }
+            }
         });
 
         this.addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent e) {
-                int nodeIndex = isHoveringNode(e.getX(), e.getY());
-                if (nodeIndex >= 0) {
+                if (draggedNodeIndex >= 0) {
                     mouseX = e.getX();
                     mouseY = e.getY();
-                    nodeData.get(nodeIndex)[0] = mouseX - (int)nodeRadius;
-                    nodeData.get(nodeIndex)[1] = mouseY - (int)nodeRadius;
+                    nodeData.get(draggedNodeIndex)[0] = mouseX - (int)nodeRadius;
+                    nodeData.get(draggedNodeIndex)[1] = mouseY - (int)nodeRadius;
+                    updateLinePosition();
                     repaint();
                 }
             }
@@ -138,6 +143,18 @@ public class GraphicsPanel extends JPanel {
             }
         }
         return -1;
+    }
+
+    public void updateLinePosition() {
+        for (int i = 0; i < this.lineData.size(); i++) {
+            if (this.lineData.get(i)[0] == this.nodeData.get(draggedNodeIndex)[0] && this.lineData.get(i)[1] == this.nodeData.get(draggedNodeIndex)[1]) {
+                this.lineData.get(i)[0] = mouseX - (int)nodeRadius;
+                this.lineData.get(i)[1] = mouseY - (int)nodeRadius;
+            } else if (this.lineData.get(i)[2] == this.nodeData.get(draggedNodeIndex)[0] && this.lineData.get(i)[3] == this.nodeData.get(draggedNodeIndex)[1]) {
+                this.lineData.get(i)[2] = mouseX - (int)nodeRadius;
+                this.lineData.get(i)[3] = mouseY - (int)nodeRadius;
+            }
+        }
     }
 
     public void nodeColor(int index, int color){
