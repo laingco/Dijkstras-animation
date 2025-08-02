@@ -13,17 +13,30 @@ public class GraphicsPanel extends JPanel {
     private JPopupMenu clickMenu;
     private JMenuItem addLinkItem;
     private JMenuItem deleteNodeItem;
+    private JPopupMenu linkMenu;
+    private JMenuItem editNodeItem;
+    private JMenuItem deleteLinkItem;
+    private JMenuItem editWeightItem;
     private int mouseX;
     private int mouseY;
     private int clickedNodeIndex = -1;
     private int draggedNodeIndex = -1;
+    private int clickedLineIndex = -1;
+    private Dijkstras dijkstras;
+    private boolean deletingLink = false;
 
-    public GraphicsPanel() {
+    public GraphicsPanel(Dijkstras dijkstras) {
         setBackground(Color.LIGHT_GRAY);
+        this.dijkstras = dijkstras;
 
         this.clickMenu = new JPopupMenu();
         this.addLinkItem = new JMenuItem("Add Link");
         this.deleteNodeItem = new JMenuItem("Delete");
+        this.editNodeItem = new JMenuItem("Set Name");
+
+        this.linkMenu = new JPopupMenu();
+        this.editWeightItem = new JMenuItem("Set Weight");
+        this.deleteLinkItem = new JMenuItem("Delete Link");
 
         this.addLinkItem.addActionListener(e -> {
             this.creatingLink = true;
@@ -34,23 +47,69 @@ public class GraphicsPanel extends JPanel {
             }
             System.out.println("Node deleted at index: " + clickedNodeIndex);
         });
+        this.editNodeItem.addActionListener(e -> {
+            String name = JOptionPane.showInputDialog("Enter node name:");
+            if (name != null && !name.trim().isEmpty() && clickedNodeIndex >= 0) {
+                ArrayList<String[]> temp = this.dijkstras.getFiles().getNodes();
+                String oldName = temp.get(clickedNodeIndex)[0];
+                updateNodeName(oldName, name);
+                temp.get(clickedNodeIndex)[0] = name;
+                this.dijkstras.getFiles().setNodes(temp);
+                this.dijkstras.updateData();
+                repaint();
+            }
+        });
+        this.editWeightItem.addActionListener(e -> {
+            String weightStr = JOptionPane.showInputDialog("Enter link weight:");
+            if (weightStr != null && !weightStr.trim().isEmpty() && clickedLineIndex >= 0) {
+                try {
+                    int weight = Integer.parseInt(weightStr);
+                    this.lineData.get(clickedLineIndex)[6] = weight;
+                    ArrayList<String[]> temp = this.dijkstras.getFiles().getLines();
+                    temp.get(clickedLineIndex)[2] = Integer.toString(weight);
+                    this.dijkstras.getFiles().setLines(temp);
+                    this.dijkstras.updateData();
+                    repaint();
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(this, "Invalid weight. Please enter a number.");
+                }
+            }
+        });
 
         this.clickMenu.add(addLinkItem);
         this.clickMenu.add(deleteNodeItem);
+        this.clickMenu.add(editNodeItem);
+
+        this.linkMenu.add(editWeightItem);
+        this.linkMenu.add(deleteLinkItem);
         
         this.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e){
                 int nodeIndex = isHoveringNode(e.getX(), e.getY());
+                int lineIndex = isHoveringLine(e.getX(), e.getY());
                 System.out.println("Node index: " + nodeIndex);
+                System.out.println("Line index: " + lineIndex);
 
-                if (nodeIndex >= 0 && creatingLink && e.getButton() == 1){
-                    addLine(clickedNodeIndex, nodeIndex, 100);
+                if (nodeIndex >= 0 && creatingLink && e.getButton() == 1 && clickedNodeIndex != nodeIndex) {
+                    addLine(clickedNodeIndex, nodeIndex, 100, true);
                     creatingLink = false;
+                    repaint();
+                } else if(lineIndex >=0 && deletingLink && e.getButton() == 1) {
+                    removeLine(lineIndex);
+                    deletingLink = false;
+                    dijkstras.getGui().setStatusLabel("None");
                     repaint();
                 } else if (nodeIndex >= 0 && e.getButton() == 1) {
                     draggedNodeIndex = nodeIndex;
                 } else if (nodeIndex >= 0 && e.getButton() == 3){
                     clickMenu.show(e.getComponent(), e.getX(), e.getY());
+                } else if (lineIndex >= 0 && e.getButton() == 3) {
+                    clickedLineIndex = lineIndex;
+                    linkMenu.show(e.getComponent(), e.getX(), e.getY());
+                } else {
+                    clickedNodeIndex = -1;
+                    draggedNodeIndex = -1;
+                    clickedLineIndex = -1;
                 }
 
                 mouseX = e.getX();
@@ -70,13 +129,39 @@ public class GraphicsPanel extends JPanel {
                 if (draggedNodeIndex >= 0) {
                     mouseX = e.getX();
                     mouseY = e.getY();
+                    updateLinePosition();
+                    updateFile();
                     nodeData.get(draggedNodeIndex)[0] = mouseX - (int)nodeRadius;
                     nodeData.get(draggedNodeIndex)[1] = mouseY - (int)nodeRadius;
-                    updateLinePosition();
                     repaint();
                 }
             }
         });
+    }
+
+    public void updateFile() {
+        ArrayList<String[]> updatedNodeData = this.dijkstras.getFiles().getNodes();
+        for (int i = 0; i < this.nodeData.size(); i++) {
+            updatedNodeData.get(i)[1] = Integer.toString(this.nodeData.get(i)[0]);
+            updatedNodeData.get(i)[2] = Integer.toString(this.nodeData.get(i)[1]);
+        }
+        this.dijkstras.getFiles().setNodes(updatedNodeData);
+        this.dijkstras.updateData();
+    }
+
+    public void updateNodeName(String oldName, String newName) {
+        ArrayList<String[]> lines = this.dijkstras.getFiles().getLines();
+        for (int i = 0; i < lines.size(); i++) {
+            String[] line = lines.get(i);
+            if (line[0].equals(oldName)) {
+                line[0] = newName;
+            } 
+            if (line[1].equals(oldName)) {
+                line[1] = newName;
+            }
+            lines.set(i, line);
+        }
+        this.dijkstras.getFiles().setNodes(lines);
     }
 
     public void paintComponent(Graphics g) {
@@ -114,13 +199,19 @@ public class GraphicsPanel extends JPanel {
         }
     }
 
-    public void addNode(int xPos, int yPos){
+    public void addNode(int xPos, int yPos, boolean updateFile) {
         int data[] = {xPos, yPos, this.nodeData.size(), 3};
         this.nodeData.add(data);
+        if (updateFile) {
+            ArrayList<String[]> updatedNodeData = this.dijkstras.getFiles().getNodes();
+            updatedNodeData.add(new String[]{Integer.toString(this.nodeData.size()), Integer.toString(xPos), Integer.toString(yPos)});
+            this.dijkstras.getFiles().setNodes(updatedNodeData);
+            this.dijkstras.updateData();
+        }
         repaint();
     }
 
-    public void addLine(int startIndex, int endIndex, int weight) {
+    public void addLine(int startIndex, int endIndex, int weight, boolean updateFile) {
         //System.out.println(startIndex+" "+endIndex);
         int x1 = this.nodeData.get(startIndex)[0];
         int y1 = this.nodeData.get(startIndex)[1];
@@ -128,6 +219,12 @@ public class GraphicsPanel extends JPanel {
         int y2 = this.nodeData.get(endIndex)[1];
         int data[] = {x1, y1, x2, y2, this.lineData.size(), 3, weight};
         this.lineData.add(data);
+        if (updateFile) {
+            ArrayList<String[]> updatedLineData = this.dijkstras.getFiles().getLines();
+            updatedLineData.add(new String[]{this.dijkstras.getFiles().getNodes().get(startIndex)[0], this.dijkstras.getFiles().getNodes().get(endIndex)[0], Integer.toString(weight)});
+            this.dijkstras.getFiles().setLines(updatedLineData);
+            this.dijkstras.updateData();
+        }
         repaint();
     }
 
@@ -139,6 +236,23 @@ public class GraphicsPanel extends JPanel {
             dist = Math.sqrt(Math.pow(x-(nodeData.get(i)[0]+nodeRadius), 2) + Math.pow(y-(nodeData.get(i)[1]+nodeRadius), 2));
 
             if (dist <= nodeRadius){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int isHoveringLine(int x, int y){
+        for (int i = 0; i < lineData.size(); i++){
+            double dist = Integer.MAX_VALUE;
+            Line2D line = new Line2D.Double(
+                lineData.get(i)[0] + nodeRadius,
+                lineData.get(i)[1] + nodeRadius,
+                lineData.get(i)[2] + nodeRadius,
+                lineData.get(i)[3] + nodeRadius
+            );
+            dist = line.ptSegDist(x, y);
+            if (dist <= nodeRadius) {
                 return i;
             }
         }
@@ -237,28 +351,62 @@ public class GraphicsPanel extends JPanel {
 
     public void removeNode(int index) {
         if (index >= 0 && index < this.nodeData.size()) {
-            for (int i = 0; i < lineData.size(); i++) {
-                if (this.lineData.get(i)[0] == this.nodeData.get(index)[0] && this.lineData.get(i)[1] == this.nodeData.get(index)[1]
-                || this.lineData.get(i)[2] == this.nodeData.get(index)[0] && this.lineData.get(i)[3] == this.nodeData.get(index)[1]) {
+            for (int i = this.lineData.size() - 1; i >= 0; i--) {
+                if ((this.lineData.get(i)[0] == this.nodeData.get(index)[0] && this.lineData.get(i)[1] == this.nodeData.get(index)[1]) ||
+                    (this.lineData.get(i)[2] == this.nodeData.get(index)[0] && this.lineData.get(i)[3] == this.nodeData.get(index)[1])) {
                     removeLine(i);
                     System.out.println("Line removed at index: " + i);
                 }
             }
+            ArrayList<String[]> updatedNodeData = this.dijkstras.getFiles().getNodes();
+            updatedNodeData.remove(index);
+            this.dijkstras.getFiles().setNodes(updatedNodeData);
+            this.dijkstras.getFiles().setNodeCount(updatedNodeData.size());
+            this.dijkstras.updateData();
             this.nodeData.remove(index);
             for (int i = 0; i < this.nodeData.size(); i++) {
                 this.nodeData.get(i)[2] = i;
             }
+            for (int i = 0; i < lineData.size(); i++) {
+                this.lineData.get(i)[4] = i;
+            }
+            clickedNodeIndex = -1;
+            draggedNodeIndex = -1;
             repaint();
         }
     }
 
     public void removeLine(int index) {
         if (index >= 0 && index < this.lineData.size()) {
+            ArrayList<String[]> updatedLineData = this.dijkstras.getFiles().getLines();
+            updatedLineData.remove(index);
+            this.dijkstras.getFiles().setLines(updatedLineData);
+            this.dijkstras.getFiles().setLineCount(updatedLineData.size());
+
             this.lineData.remove(index);
-            for (int i = 0; i < lineData.size(); i++) {
-                this.lineData.get(i)[4] = i;
-            }
             repaint();
         }
+    }
+
+    public void clearAll() {
+        this.nodeData.clear();
+        this.lineData.clear();
+        repaint();
+    }
+
+    public int getMouseX() {
+        return this.mouseX;
+    }
+
+    public int getMouseY() {
+        return this.mouseY;
+    }
+
+    public void setDeletingLink(boolean deletingLink) {
+        this.deletingLink = deletingLink;
+    }
+
+    public boolean getDeletingLink() {
+        return this.deletingLink;
     }
 }

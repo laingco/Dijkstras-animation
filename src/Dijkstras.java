@@ -13,19 +13,22 @@ public class Dijkstras {
     private DijkstrasNode endNode;
     private Map<Integer, DijkstrasNode> nodeMap;
     private Integer animationSpeed = 750;
+    private GUI gui;
 
-    public Dijkstras(){
+    public Dijkstras(GUI gui) {
+        this.gui = gui;
         importData();
         createPanel();
     }
 
-    public void runDijkstras(){
+    public void runDijkstras() {
         System.out.println("run dijkstras");
         this.nodeMap = new HashMap<>();
         this.startNode = createTree(this.startNode.getIndex());
         System.out.println(this.startNode.getIndex());
         this.graphicsPanel.clearLineColors();
         this.graphicsPanel.clearNodeColors();
+        
         
         startNode.setDistanceFromStart(0);
 
@@ -119,6 +122,22 @@ public class Dijkstras {
         this.endNode = this.nodeMap.get(files.getNodes().size() - 1);
     }
 
+    public void importData(String filePath){
+        this.files = new FileEditor(filePath);
+        indexData();
+        this.nodeMap = new HashMap<>();
+        this.startNode = createTree(0);
+        this.endNode = this.nodeMap.get(files.getNodes().size() - 1);
+    }
+
+    public void updateData() {
+        indexData();
+        this.nodeMap = new HashMap<>();
+        this.startNode = createTree(0);
+        this.endNode = this.nodeMap.get(files.getNodes().size() - 1);
+        this.gui.createMenuBar();
+    }
+
     public DijkstrasNode createTree(int nodeIndex) {
         if (this.nodeMap.containsKey(nodeIndex)) {
             return this.nodeMap.get(nodeIndex);
@@ -164,34 +183,34 @@ public class Dijkstras {
     }
 
     public void indexData(){
-        this.indexedLineStart = new int[files.getLines().size()];
-        this.indexedLineEnd = new int[files.getLines().size()];
-        this.weights = new int[files.getLines().size()];
+        this.indexedLineStart = new int[this.files.getLines().size()];
+        this.indexedLineEnd = new int[this.files.getLines().size()];
+        this.weights = new int[this.files.getLines().size()];
         this.weightsMap = new HashMap<>();
-        for (int i = 0; i < files.getNodes().size(); i++){
-            for (int j = 0; j < files.getLines().size(); j++){
-                if (files.getNodes().get(i)[0].equals(files.getLines().get(j)[0])){
-                    indexedLineStart[j] = i;
-                }else if (files.getNodes().get(i)[0].equals(files.getLines().get(j)[1])){
-                    indexedLineEnd[j] = i;
+        for (int i = 0; i < this.files.getNodes().size(); i++){
+            for (int j = 0; j < this.files.getLines().size(); j++){
+                if (this.files.getNodes().get(i)[0].equals(this.files.getLines().get(j)[0])){
+                    this.indexedLineStart[j] = i;
+                }else if (this.files.getNodes().get(i)[0].equals(this.files.getLines().get(j)[1])){
+                    this.indexedLineEnd[j] = i;
                 }
             }
         }
         for (int i = 0; i < this.files.getLines().size(); i++){
-            weights[i] = Integer.parseInt(files.getLines().get(i)[2]);
-            weightsMap.put(files.getLines().get(i)[0] + "-" + files.getLines().get(i)[1], Integer.parseInt(files.getLines().get(i)[2]));
-            weightsMap.put(files.getLines().get(i)[1] + "-" + files.getLines().get(i)[0], Integer.parseInt(files.getLines().get(i)[2]));
+            this.weights[i] = Integer.parseInt(this.files.getLines().get(i)[2]);
+            this.weightsMap.put(this.files.getLines().get(i)[0] + "-" + this.files.getLines().get(i)[1], Integer.parseInt(this.files.getLines().get(i)[2]));
+            this.weightsMap.put(this.files.getLines().get(i)[1] + "-" + this.files.getLines().get(i)[0], Integer.parseInt(this.files.getLines().get(i)[2]));
         }
     }
 
     public void createPanel(){
-        this.graphicsPanel = new GraphicsPanel();
+        this.graphicsPanel = new GraphicsPanel(this);
         for (int i = 0; i < this.files.getNodes().size(); i++){
-            graphicsPanel.addNode(Integer.parseInt(this.files.getNodes().get(i)[1]), Integer.parseInt(this.files.getNodes().get(i)[2]));
+            this.graphicsPanel.addNode(Integer.parseInt(this.files.getNodes().get(i)[1]), Integer.parseInt(this.files.getNodes().get(i)[2]), false);
         }
 
         for (int i = 0; i < this.files.getLines().size(); i++){
-            graphicsPanel.addLine(this.indexedLineStart[i], this.indexedLineEnd[i], this.weights[i]);
+            this.graphicsPanel.addLine(this.indexedLineStart[i], this.indexedLineEnd[i], this.weights[i], false);
         }
     }
 
@@ -270,5 +289,21 @@ public class Dijkstras {
 
     public void setNodeMap(Map<Integer, DijkstrasNode> nodeMap) {
         this.nodeMap = nodeMap;
+    }
+
+    public Integer getAnimationSpeed() {
+        return animationSpeed;
+    }
+
+    public void setAnimationSpeed(Integer animationSpeed) {
+        this.animationSpeed = animationSpeed;
+    }
+
+    public GUI getGui() {
+        return gui;
+    }
+
+    public void setGui(GUI gui) {
+        this.gui = gui;
     }
 }

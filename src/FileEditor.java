@@ -7,15 +7,23 @@ public class FileEditor {
     private int lineCount;
     private ArrayList<String[]> nodes;
     private ArrayList<String[]> lines;
+    private String filePath;
 
     public FileEditor(){
-        parseData(getData());
+        this.filePath = "src/graphData.csv";
+        parseData(loadData(this.filePath));
     }
 
-    public ArrayList<String[]> getData(){
+    public FileEditor(String filePath){
+        this.filePath = filePath;
+        parseData(loadData(this.filePath));
+    }
+
+    public ArrayList<String[]> loadData(String filePath) {
         ArrayList<String[]> output = new ArrayList<String[]>();
+        this.filePath = filePath;
         try{
-            Scanner scanner = new Scanner(new File("src/graphData.csv"));
+            Scanner scanner = new Scanner(new File(filePath));
             while(scanner.hasNextLine()){
                 String[] currentLine = scanner.nextLine().split(",");
                 output.add(currentLine);
@@ -53,9 +61,10 @@ public class FileEditor {
         }
     }
 
-    public void saveData(ArrayList<String[]> nodes, ArrayList<String[]> lines){
+    public void saveData(ArrayList<String[]> nodes, ArrayList<String[]> lines, String filePath) {
+        this.filePath = filePath;
         try {
-            PrintWriter writer = new PrintWriter(new File("src/graphData.csv"));
+            PrintWriter writer = new PrintWriter(new File(filePath));
             writer.println(nodes.size());
             for (int i = 0; i < nodes.size(); i++) {
                 String[] node = nodes.get(i);
@@ -104,5 +113,13 @@ public class FileEditor {
 
     public void setLineCount(int lineCount) {
         this.lineCount = lineCount;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 }

@@ -1,0 +1,25 @@
+9
+WellingtonCity,400,650
+Porirua,200,300
+Petone,550,450
+Eastbourne,810,650
+Upper Hutt,700,200
+Masterton,149,179
+Tawa,300,200
+Seaview,100,50
+9,255,135
+14
+WellingtonCity,Porirua,150
+WellingtonCity,Petone,100
+Porirua,Petone,200
+Porirua,Upper Hutt,300
+Petone,Upper Hutt,150
+Petone,Eastbourne,100
+Porirua,Masterton,250
+Petone,Tawa,150
+Upper Hutt,Tawa,100
+Tawa,Masterton,300
+Masterton,Seaview,50
+Upper Hutt,Seaview,200
+9,Tawa,100
+9,Seaview,100
