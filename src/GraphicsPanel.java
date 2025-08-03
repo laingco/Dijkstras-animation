@@ -7,8 +7,10 @@ import java.util.ArrayList;
 
 public class GraphicsPanel extends JPanel {
     private ArrayList<int[]> nodeData = new ArrayList<int[]>(); // (x, y, index, color)
-    private ArrayList<int[]> lineData = new ArrayList<int[]>(); // (x1, y1, x2, y2 index, color, weight)
+    private ArrayList<int[]> lineData = new ArrayList<int[]>(); // (x1, y1, x2, y2 index, color, weight, width, textSize)
     private double nodeRadius = 12.5;
+    private double lineWidth = 2.0;
+    private double textSize = 14.0;
     private boolean creatingLink = false;
     private JPopupMenu clickMenu;
     private JMenuItem addLinkItem;
@@ -40,6 +42,7 @@ public class GraphicsPanel extends JPanel {
 
         this.addLinkItem.addActionListener(e -> {
             this.creatingLink = true;
+            dijkstras.getGui().setStatusLabel("Creating Link");
         });
         this.deleteNodeItem.addActionListener(e -> {
             if (clickedNodeIndex >= 0) {
@@ -75,6 +78,13 @@ public class GraphicsPanel extends JPanel {
                 }
             }
         });
+        this.deleteLinkItem.addActionListener(e -> {
+            if (clickedLineIndex >= 0) {
+                removeLine(clickedLineIndex);
+                dijkstras.updateData();
+                System.out.println("Link deleted at index: " + clickedLineIndex);
+            }
+        });
 
         this.clickMenu.add(addLinkItem);
         this.clickMenu.add(deleteNodeItem);
@@ -92,6 +102,7 @@ public class GraphicsPanel extends JPanel {
 
                 if (nodeIndex >= 0 && creatingLink && e.getButton() == 1 && clickedNodeIndex != nodeIndex) {
                     addLine(clickedNodeIndex, nodeIndex, 100, true);
+                    dijkstras.getGui().setStatusLabel("None");
                     creatingLink = false;
                     repaint();
                 } else if(lineIndex >=0 && deletingLink && e.getButton() == 1) {
@@ -170,7 +181,7 @@ public class GraphicsPanel extends JPanel {
 
         for (int i = 0; i < this.lineData.size(); i ++){
                 g2d.setColor(parseColor(this.lineData.get(i)[5]));
-                g2d.setStroke(new BasicStroke(2));
+                g2d.setStroke(new BasicStroke(this.lineData.get(i)[7]));
                 g2d.draw(new Line2D.Double(
                 this.lineData.get(i)[0] + this.nodeRadius,
                 this.lineData.get(i)[1] + this.nodeRadius,
@@ -182,6 +193,7 @@ public class GraphicsPanel extends JPanel {
                 }else{
                     g2d.setColor(Color.BLACK);
                 }
+                g2d.setFont(new Font("Arial", Font.PLAIN, (int)(this.lineData.get(i)[8]/(14/this.nodeRadius))));
                 g2d.drawString(Integer.toString(this.lineData.get(i)[6]), 
                     (int)((this.lineData.get(i)[0] + this.lineData.get(i)[2]) / 2 + 9/(12.5/this.nodeRadius)), 
                     (int)((this.lineData.get(i)[1] + this.lineData.get(i)[3]) / 2 + 18/(14/this.nodeRadius)));
@@ -195,6 +207,7 @@ public class GraphicsPanel extends JPanel {
             }else{
                 g2d.setColor(Color.BLACK);
             }
+            g2d.setFont(new Font("Arial", Font.PLAIN, (int)(this.textSize/(14/this.nodeRadius))));
             g2d.drawString(Integer.toString(this.nodeData.get(i)[2]+1), (int)(this.nodeData.get(i)[0]+9/(12.5/this.nodeRadius)), (int)(this.nodeData.get(i)[1]+18/(14/this.nodeRadius)));
         }
     }
@@ -217,13 +230,21 @@ public class GraphicsPanel extends JPanel {
         int y1 = this.nodeData.get(startIndex)[1];
         int x2 = this.nodeData.get(endIndex)[0];
         int y2 = this.nodeData.get(endIndex)[1];
-        int data[] = {x1, y1, x2, y2, this.lineData.size(), 3, weight};
+        int data[] = {x1, y1, x2, y2, this.lineData.size(), 3, weight, (int)this.lineWidth, (int)this.textSize};
         this.lineData.add(data);
         if (updateFile) {
             ArrayList<String[]> updatedLineData = this.dijkstras.getFiles().getLines();
             updatedLineData.add(new String[]{this.dijkstras.getFiles().getNodes().get(startIndex)[0], this.dijkstras.getFiles().getNodes().get(endIndex)[0], Integer.toString(weight)});
             this.dijkstras.getFiles().setLines(updatedLineData);
             this.dijkstras.updateData();
+        }
+        repaint();
+    }
+
+    public void resetSize() {
+        for (int i = 0; i < this.lineData.size(); i++) {
+            this.lineData.get(i)[7] = (int)this.lineWidth;
+            this.lineData.get(i)[8] = (int)this.textSize;
         }
         repaint();
     }
@@ -287,6 +308,20 @@ public class GraphicsPanel extends JPanel {
 
     public int getLineColor(int index){
         return this.lineData.get(index)[5];
+    }
+
+    public void setLineWidth(int index, int width) {
+        if (index >= 0 && index < this.lineData.size()) {
+            this.lineData.get(index)[7] = width;
+            repaint();
+        }
+    }
+
+    public void setTextSize(int index, int size) {
+        if (index >= 0 && index < this.lineData.size()) {
+            this.lineData.get(index)[8] = size;
+            repaint();
+        }
     }
 
     public void clearLineColors() {

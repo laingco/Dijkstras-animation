@@ -28,7 +28,7 @@ public class Dijkstras {
         System.out.println(this.startNode.getIndex());
         this.graphicsPanel.clearLineColors();
         this.graphicsPanel.clearNodeColors();
-        
+        this.graphicsPanel.resetSize();
         
         startNode.setDistanceFromStart(0);
 
@@ -90,6 +90,8 @@ public class Dijkstras {
                     }
                 }
                 this.graphicsPanel.lineColor(lineIndex, 1);
+                this.graphicsPanel.setLineWidth(lineIndex, 5);
+                this.graphicsPanel.setTextSize(lineIndex, 20);
             }
             currentNode = currentNode.getPreviousNode();
             i++;
@@ -134,8 +136,9 @@ public class Dijkstras {
         indexData();
         this.nodeMap = new HashMap<>();
         this.startNode = createTree(0);
-        this.endNode = this.nodeMap.get(files.getNodes().size() - 1);
-        this.gui.createMenuBar();
+        this.endNode = this.nodeMap.get(this.nodeMap.size() - 1);
+        this.gui.createMenuBar(-1,this.nodeMap.size() - 1);
+        //this.gui.setSelectedEndNode(files.getNodes().size() - 1);
     }
 
     public DijkstrasNode createTree(int nodeIndex) {

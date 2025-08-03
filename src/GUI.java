@@ -42,7 +42,7 @@ public class GUI extends JFrame implements ActionListener{
 
         this.dijkstras = new Dijkstras(this);
 
-        createMenuBar();
+        createMenuBar(-1,-1);
 
         graphicsPanel = dijkstras.getGraphicsPanel();
         
@@ -54,7 +54,7 @@ public class GUI extends JFrame implements ActionListener{
         //dijkstras.printShortestPath();
     }
 
-    public void createMenuBar(){
+    public void createMenuBar(int startIndex, int endIndex){
         if (this.editMenuStartItems != null && this.editMenuEndItems != null) {
             removeListeners();
         }
@@ -102,8 +102,19 @@ public class GUI extends JFrame implements ActionListener{
             this.endGroup.add(this.editMenuEndItems[i]);
         }
 
-        this.editMenuStartItems[0].setSelected(true);
-        this.editMenuEndItems[this.dijkstras.getFiles().getNodes().size()-1].setSelected(true);
+        if (startIndex < 0 && endIndex < 0){
+            this.editMenuStartItems[0].setSelected(true);
+            this.editMenuEndItems[this.dijkstras.getFiles().getNodes().size()-1].setSelected(true);
+        } else if (startIndex >= 0 && endIndex >= 0) {
+            this.editMenuStartItems[startIndex].setSelected(true);
+            this.editMenuEndItems[endIndex].setSelected(true);
+        } else if (startIndex >= 0 && endIndex < 0) {
+            this.editMenuStartItems[startIndex].setSelected(true);
+            this.editMenuEndItems[this.dijkstras.getFiles().getNodes().size()-1].setSelected(true);
+        } else if (endIndex >= 0 && startIndex < 0) {
+            this.editMenuStartItems[0].setSelected(true);
+            this.editMenuEndItems[endIndex].setSelected(true);
+        }
 
         //fileMenu.add(fileMenuNew);
         this.fileMenu.add(this.fileMenuLoad);
@@ -160,6 +171,7 @@ public class GUI extends JFrame implements ActionListener{
                 this.dijkstras.getGraphicsPanel().nodeColor(i, 2);
                 this.dijkstras.getGraphicsPanel().clearLineColors();
                 this.dijkstras.getGraphicsPanel().clearNodeColors();
+                this.dijkstras.getGraphicsPanel().resetSize();
             } else if (e.getSource() == this.editMenuEndItems[i]) {
                 this.dijkstras.getGraphicsPanel().nodeColor(dijkstras.getEndNode().getIndex(), 3);
                 this.dijkstras.setEndNode(dijkstras.getNodeMap().get(i));
@@ -167,6 +179,7 @@ public class GUI extends JFrame implements ActionListener{
                 this.dijkstras.getGraphicsPanel().nodeColor(i, 1);
                 this.dijkstras.getGraphicsPanel().clearLineColors();
                 this.dijkstras.getGraphicsPanel().clearNodeColors();
+                this.dijkstras.getGraphicsPanel().resetSize();
             }
         }
         if (e.getSource() == this.fileMenuRun) {
@@ -195,10 +208,10 @@ public class GUI extends JFrame implements ActionListener{
                 this.dijkstras.importData(selectedFilePath);
                 this.dijkstras.createPanel();
                 this.graphicsPanel = dijkstras.getGraphicsPanel();
-                this.createMenuBar();
+                this.createMenuBar(-1,-1);
                 //this.dijkstras.getFiles().parseData(this.dijkstras.getFiles().loadData(selectedFilePath));
                 //this.dijkstras.updateData();
-                this.fileLabel.setText("   File: " + this.dijkstras.getFiles().getFilePath());
+                this.fileLabel.setText("   Selected file: " + this.dijkstras.getFiles().getFilePath());
                 //this.graphicsPanel = dijkstras.getGraphicsPanel();
                 this.getContentPane().removeAll();
                 this.getContentPane().add(this.graphicsPanel, BorderLayout.CENTER);
@@ -236,5 +249,7 @@ public class GUI extends JFrame implements ActionListener{
 
     public void setStatusLabel(String status) {
         this.statusLabel.setText("   Current action: " + status);
+        this.revalidate();
+        this.repaint();
     }
 }
