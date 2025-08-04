@@ -67,6 +67,9 @@ public class GraphicsPanel extends JPanel {
             if (weightStr != null && !weightStr.trim().isEmpty() && clickedLineIndex >= 0) {
                 try {
                     int weight = Integer.parseInt(weightStr);
+                    if (weight < 0) {
+                        throw new NumberFormatException();
+                    }
                     this.lineData.get(clickedLineIndex)[6] = weight;
                     ArrayList<String[]> temp = this.dijkstras.getFiles().getLines();
                     temp.get(clickedLineIndex)[2] = Integer.toString(weight);
@@ -74,7 +77,7 @@ public class GraphicsPanel extends JPanel {
                     this.dijkstras.updateData();
                     repaint();
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(this, "Invalid weight. Please enter a number.");
+                    JOptionPane.showMessageDialog(this, "Invalid weight. Please enter a positive number.");
                 }
             }
         });
