@@ -333,7 +333,13 @@ public class GraphicsPanel extends JPanel {
 
     public void clearNodeColors(){
         for (int i = 0; i < this.nodeData.size(); i++){
-            this.nodeData.get(i)[3] = 3;
+            if (this.dijkstras.getStartNode().getIndex() == i){
+                this.nodeData.get(i)[3] = 6;
+            } else if (this.dijkstras.getEndNode().getIndex() == i){
+                this.nodeData.get(i)[3] = 0;
+            } else{
+                this.nodeData.get(i)[3] = 3;
+            }
         }
         repaint();
     }

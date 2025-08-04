@@ -3,6 +3,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 public class GUI extends JFrame implements ActionListener{
     private GraphicsPanel graphicsPanel;
@@ -44,7 +45,9 @@ public class GUI extends JFrame implements ActionListener{
 
         createMenuBar(-1,-1);
 
-        graphicsPanel = dijkstras.getGraphicsPanel();
+        this.graphicsPanel = dijkstras.getGraphicsPanel();
+        this.graphicsPanel.clearNodeColors();
+        this.graphicsPanel.clearLineColors();
         
         //dijkstras.files.printData();
 
@@ -88,6 +91,14 @@ public class GUI extends JFrame implements ActionListener{
         this.fileMenuExit.addActionListener(this);
         this.editMenuNewNode.addActionListener(this);
         this.editMenuDeleteLink.addActionListener(this);
+
+        this.fileMenuLoad.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
+        this.fileMenuSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
+        this.fileMenuSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
+        this.fileMenuRun.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
+        this.fileMenuExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
+        this.editMenuNewNode.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK));
+        this.editMenuDeleteLink.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK));
 
         this.startGroup = new ButtonGroup();
         this.endGroup = new ButtonGroup();
@@ -168,7 +179,7 @@ public class GUI extends JFrame implements ActionListener{
                 this.dijkstras.getGraphicsPanel().nodeColor(dijkstras.getStartNode().getIndex(), 3);
                 this.dijkstras.setStartNode(dijkstras.getNodeMap().get(i));
                 System.out.println("Start node set to: " + dijkstras.getNodeMap().get(i).getNodeName());
-                this.dijkstras.getGraphicsPanel().nodeColor(i, 2);
+                //this.dijkstras.getGraphicsPanel().nodeColor(i, 6);
                 this.dijkstras.getGraphicsPanel().clearLineColors();
                 this.dijkstras.getGraphicsPanel().clearNodeColors();
                 this.dijkstras.getGraphicsPanel().resetSize();
@@ -176,7 +187,7 @@ public class GUI extends JFrame implements ActionListener{
                 this.dijkstras.getGraphicsPanel().nodeColor(dijkstras.getEndNode().getIndex(), 3);
                 this.dijkstras.setEndNode(dijkstras.getNodeMap().get(i));
                 System.out.println("End node set to: " + dijkstras.getNodeMap().get(i).getNodeName());
-                this.dijkstras.getGraphicsPanel().nodeColor(i, 1);
+                //this.dijkstras.getGraphicsPanel().nodeColor(i, 1);
                 this.dijkstras.getGraphicsPanel().clearLineColors();
                 this.dijkstras.getGraphicsPanel().clearNodeColors();
                 this.dijkstras.getGraphicsPanel().resetSize();

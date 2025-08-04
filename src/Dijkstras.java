@@ -12,7 +12,7 @@ public class Dijkstras {
     private DijkstrasNode startNode;
     private DijkstrasNode endNode;
     private Map<Integer, DijkstrasNode> nodeMap;
-    private Integer animationSpeed = 750;
+    private Integer animationSpeed = 300;
     private GUI gui;
 
     public Dijkstras(GUI gui) {
