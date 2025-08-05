@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+// Simple priority queue for Dijkstra's algorithm
 public class PQueue {
     private ArrayList<DijkstrasNode> list;
 
@@ -7,6 +8,7 @@ public class PQueue {
         list = new ArrayList<>();
     }
 
+    // Enqueue node in sorted order by distance
     public void enqueue(DijkstrasNode item) {
         int i = 0;
         while (i < list.size() && list.get(i).getDistanceFromStart() <= item.getDistanceFromStart()) {
@@ -15,6 +17,7 @@ public class PQueue {
         list.add(i, item);
     }
 
+    // Remove and return node with smallest distance
     public DijkstrasNode dequeue() {
         if (isEmpty()) {
             return null;

@@ -2,25 +2,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+// Main algorithm and graph data manager
 public class Dijkstras {
     private FileEditor files;
-    private int[] indexedLineStart;
-    private int[] indexedLineEnd;
-    private int[] weights;
+    private int[] indexedLineStart, indexedLineEnd, weights;
     private Map<String, Integer> weightsMap;
     private GraphicsPanel graphicsPanel;
-    private DijkstrasNode startNode;
-    private DijkstrasNode endNode;
+    private DijkstrasNode startNode, endNode;
     private Map<Integer, DijkstrasNode> nodeMap;
     private Integer animationSpeed = 300;
     private GUI gui;
 
+    // Construct with reference to GUI
     public Dijkstras(GUI gui) {
         this.gui = gui;
         importData();
         createPanel();
     }
 
+    // Run Dijkstra's algorithm and animate
     public void runDijkstras() {
         System.out.println("run dijkstras");
         this.nodeMap = new HashMap<>();
@@ -73,6 +73,7 @@ public class Dijkstras {
         System.out.println("Dijkstra's algorithm completed.");
     }
 
+    // Print the shortest path from start to end node
     public void printShortestPath() {
         DijkstrasNode currentNode = this.nodeMap.get(this.endNode.getIndex());
         ArrayList<DijkstrasNode> path = new ArrayList<>();
@@ -106,7 +107,8 @@ public class Dijkstras {
         System.out.println("Done");
     }
 
-    public double calculateDistance(DijkstrasNode node, DijkstrasNode node2){
+    // Utility: calculate Euclidean distance between two nodes
+    public double calculateDistance(DijkstrasNode node, DijkstrasNode node2) {
         if (node.hasNextNode()){
             double distance;
             distance = Math.sqrt(Math.pow((node.getNodeX()-node2.getNodeX()),2) + Math.pow((node.getNodeY()-node2.getNodeY()),2));
@@ -116,7 +118,8 @@ public class Dijkstras {
         }
     }
 
-    public void importData(){
+    // Load default data
+    public void importData() {
         this.files = new FileEditor();
         indexData();
         this.nodeMap = new HashMap<>();
@@ -124,7 +127,8 @@ public class Dijkstras {
         this.endNode = this.nodeMap.get(files.getNodes().size() - 1);
     }
 
-    public void importData(String filePath){
+    // Load data from a specific file
+    public void importData(String filePath) {
         this.files = new FileEditor(filePath);
         indexData();
         this.nodeMap = new HashMap<>();
@@ -132,15 +136,16 @@ public class Dijkstras {
         this.endNode = this.nodeMap.get(files.getNodes().size() - 1);
     }
 
+    // Re-index and update all data structures
     public void updateData() {
         indexData();
         this.nodeMap = new HashMap<>();
         this.startNode = createTree(0);
         this.endNode = this.nodeMap.get(this.nodeMap.size() - 1);
-        this.gui.createMenuBar(-1,this.nodeMap.size() - 1);
-        //this.gui.setSelectedEndNode(files.getNodes().size() - 1);
+        this.gui.createMenuBar(-1, this.nodeMap.size() - 1);
     }
 
+    // Recursively build the graph structure
     public DijkstrasNode createTree(int nodeIndex) {
         if (this.nodeMap.containsKey(nodeIndex)) {
             return this.nodeMap.get(nodeIndex);
@@ -169,7 +174,8 @@ public class Dijkstras {
         return node;
     }
 
-    public void printTree(DijkstrasNode tree){
+    // Utility: print the tree structure (for debugging)
+    public void printTree(DijkstrasNode tree) {
         //System.out.println((tree.getIndex()+1) + " " + tree.hasNextNode());
         if (tree.hasNextNode()){
             System.out.println("node: " + (tree.getIndex()+1));
@@ -185,7 +191,8 @@ public class Dijkstras {
         }
     }
 
-    public void indexData(){
+    // Build index arrays for fast lookup
+    public void indexData() {
         this.indexedLineStart = new int[this.files.getLines().size()];
         this.indexedLineEnd = new int[this.files.getLines().size()];
         this.weights = new int[this.files.getLines().size()];
@@ -206,17 +213,18 @@ public class Dijkstras {
         }
     }
 
-    public void createPanel(){
+    // Create the graphics panel and add nodes/lines
+    public void createPanel() {
         this.graphicsPanel = new GraphicsPanel(this);
-        for (int i = 0; i < this.files.getNodes().size(); i++){
+        for (int i = 0; i < this.files.getNodes().size(); i++) {
             this.graphicsPanel.addNode(Integer.parseInt(this.files.getNodes().get(i)[1]), Integer.parseInt(this.files.getNodes().get(i)[2]), false);
         }
-
-        for (int i = 0; i < this.files.getLines().size(); i++){
+        for (int i = 0; i < this.files.getLines().size(); i++) {
             this.graphicsPanel.addLine(this.indexedLineStart[i], this.indexedLineEnd[i], this.weights[i], false);
         }
     }
 
+    // Getters and setters for various fields
     public GraphicsPanel getGraphicsPanel() {
         return graphicsPanel;
     }

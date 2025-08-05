@@ -2,23 +2,25 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.ArrayList;
 
+// Handles loading, saving, and parsing graph data files
 public class FileEditor {
-    private int nodeCount;
-    private int lineCount;
-    private ArrayList<String[]> nodes;
-    private ArrayList<String[]> lines;
+    private int nodeCount, lineCount;
+    private ArrayList<String[]> nodes, lines;
     private String filePath;
 
-    public FileEditor(){
+    // Load default file
+    public FileEditor() {
         this.filePath = "src/graphData.csv";
         parseData(loadData(this.filePath));
     }
 
-    public FileEditor(String filePath){
+    // Load specific file
+    public FileEditor(String filePath) {
         this.filePath = filePath;
         parseData(loadData(this.filePath));
     }
 
+    // Load file data into memory
     public ArrayList<String[]> loadData(String filePath) {
         ArrayList<String[]> output = new ArrayList<String[]>();
         this.filePath = filePath;
@@ -35,6 +37,7 @@ public class FileEditor {
         return(output);
     }
 
+    // Parse loaded data into nodes and lines
     public void parseData(ArrayList<String[]> input){
         this.nodes = new ArrayList<String[]>();
         this.lines = new ArrayList<String[]>();
@@ -48,6 +51,7 @@ public class FileEditor {
         }
     }
 
+    // Print loaded data (for debugging)
     public void printData(){
         System.out.println("Number of nodes: " + nodeCount);
         System.out.println("Number of lines: " + lineCount);
@@ -61,6 +65,7 @@ public class FileEditor {
         }
     }
 
+    // Save current graph data to file
     public void saveData(ArrayList<String[]> nodes, ArrayList<String[]> lines, String filePath) {
         this.filePath = filePath;
         try {
@@ -81,6 +86,7 @@ public class FileEditor {
         }
     }
 
+    // Getters and setters
     public ArrayList<String[]> getNodes() {
         return nodes;
     }

@@ -5,59 +5,44 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-public class GUI extends JFrame implements ActionListener{
+// Main window for the application
+public class GUI extends JFrame implements ActionListener {
+    // UI components and state
     private GraphicsPanel graphicsPanel;
     private JMenuBar menuBar;
-    private JMenu fileMenu;
-    private JMenu editMenu;
-    private JMenu editMenuStartMenu;
-    private JMenu editMenuEndMenu;
-    private JRadioButtonMenuItem[] editMenuStartItems;
-    private JRadioButtonMenuItem[] editMenuEndItems;
-    private JMenuItem editMenuNewNode;
-    private JMenuItem editMenuDeleteLink;
-    //private JMenuItem fileMenuNew;
-    private JMenuItem fileMenuSave;
-    private JMenuItem fileMenuSaveAs;
-    //private JMenuItem fileMenuOpen;
-    private JMenuItem fileMenuRun;
-    private JMenuItem fileMenuExit;
-    private JMenuItem fileMenuLoad;
-    private int SCREEN_WIDTH;
-    private int SCREEN_HEIGHT;
+    private JMenu fileMenu, editMenu, editMenuStartMenu, editMenuEndMenu;
+    private JRadioButtonMenuItem[] editMenuStartItems, editMenuEndItems;
+    private JMenuItem editMenuNewNode, editMenuDeleteLink, fileMenuSave, fileMenuSaveAs, fileMenuRun, fileMenuExit, fileMenuLoad;
+    private int SCREEN_WIDTH, SCREEN_HEIGHT;
     private Dijkstras dijkstras;
-    private ButtonGroup startGroup;
-    private ButtonGroup endGroup;
-    private JLabel fileLabel;
-    private JLabel statusLabel;
+    private ButtonGroup startGroup, endGroup;
+    private JLabel fileLabel, statusLabel;
 
-    public GUI(int SCREEN_WIDTH, int SCREEN_HEIGHT){
+    public GUI(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
         this.SCREEN_WIDTH = SCREEN_WIDTH;
         this.SCREEN_HEIGHT = SCREEN_HEIGHT;
     }
 
-    public void initialize(){
+    // Set up the window and initial graph
+    public void initialize() {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(this.SCREEN_WIDTH, this.SCREEN_HEIGHT);
         this.setTitle("Dijkstra's animation");
 
         this.dijkstras = new Dijkstras(this);
 
-        createMenuBar(-1,-1);
+        createMenuBar(-1, -1);
 
         this.graphicsPanel = dijkstras.getGraphicsPanel();
         this.graphicsPanel.clearNodeColors();
         this.graphicsPanel.clearLineColors();
-        
-        //dijkstras.files.printData();
 
         this.getContentPane().add(this.graphicsPanel, BorderLayout.CENTER);
         this.setVisible(true);
-        //dijkstras.runDijkstras();
-        //dijkstras.printShortestPath();
     }
 
-    public void createMenuBar(int startIndex, int endIndex){
+    // Build the menu bar and connect listeners
+    public void createMenuBar(int startIndex, int endIndex) {
         if (this.editMenuStartItems != null && this.editMenuEndItems != null) {
             removeListeners();
         }
@@ -71,11 +56,9 @@ public class GUI extends JFrame implements ActionListener{
         this.editMenuEndMenu = new JMenu("End node");
         this.editMenuNewNode = new JMenuItem("New Node");
         this.editMenuDeleteLink = new JMenuItem("Delete Link");
-        //this.fileMenuNew = new JMenuItem("New");
         this.fileMenuLoad = new JMenuItem("Load");
         this.fileMenuSave = new JMenuItem("Save");
         this.fileMenuSaveAs = new JMenuItem("Save As");
-        //this.fileMenuOpen = new JMenuItem("Open");
         this.fileMenuRun = new JMenuItem("Run Dijkstra's");
         this.fileMenuExit = new JMenuItem("Exit");
         this.fileLabel = new JLabel("   Current file: " + this.dijkstras.getFiles().getFilePath());
@@ -127,15 +110,13 @@ public class GUI extends JFrame implements ActionListener{
             this.editMenuEndItems[endIndex].setSelected(true);
         }
 
-        //fileMenu.add(fileMenuNew);
         this.fileMenu.add(this.fileMenuLoad);
         this.fileMenu.add(this.fileMenuSave);
         this.fileMenu.add(fileMenuSaveAs);
-        //fileMenu.add(fileMenuOpen);
         this.fileMenu.add(this.fileMenuRun);
         this.fileMenu.add(this.fileMenuExit);
         this.menuBar.add(this.fileMenu);
-  
+
 
         for (int i = 0; i < this.dijkstras.getFiles().getNodes().size(); i++){
             this.editMenuStartMenu.add(this.editMenuStartItems[i]);
@@ -154,6 +135,7 @@ public class GUI extends JFrame implements ActionListener{
         this.repaint();
     }
 
+    // Remove listeners before rebuilding menu bar
     public void removeListeners(){
         for (int i = 0; i < this.editMenuStartItems.length; i++){
             this.editMenuStartItems[i].removeActionListener(this);
@@ -168,18 +150,15 @@ public class GUI extends JFrame implements ActionListener{
         this.fileMenuExit.removeActionListener(this);
         this.editMenuNewNode.removeActionListener(this);
         this.editMenuDeleteLink.removeActionListener(this);
-        //this.menuBar.removeAll();
     }
 
+    // Handle menu and UI actions
     public void actionPerformed(ActionEvent e) {
-        //JRadioButtonMenuItem item = (JRadioButtonMenuItem)e.getSource();
-        //System.out.println(item.getSelectedObjects()[0].toString());
         for (int i = 0; i < dijkstras.getFiles().getNodes().size(); i++){
             if (e.getSource() == this.editMenuStartItems[i]){
                 this.dijkstras.getGraphicsPanel().nodeColor(dijkstras.getStartNode().getIndex(), 3);
                 this.dijkstras.setStartNode(dijkstras.getNodeMap().get(i));
                 System.out.println("Start node set to: " + dijkstras.getNodeMap().get(i).getNodeName());
-                //this.dijkstras.getGraphicsPanel().nodeColor(i, 6);
                 this.dijkstras.getGraphicsPanel().clearLineColors();
                 this.dijkstras.getGraphicsPanel().clearNodeColors();
                 this.dijkstras.getGraphicsPanel().resetSize();
@@ -187,7 +166,6 @@ public class GUI extends JFrame implements ActionListener{
                 this.dijkstras.getGraphicsPanel().nodeColor(dijkstras.getEndNode().getIndex(), 3);
                 this.dijkstras.setEndNode(dijkstras.getNodeMap().get(i));
                 System.out.println("End node set to: " + dijkstras.getNodeMap().get(i).getNodeName());
-                //this.dijkstras.getGraphicsPanel().nodeColor(i, 1);
                 this.dijkstras.getGraphicsPanel().clearLineColors();
                 this.dijkstras.getGraphicsPanel().clearNodeColors();
                 this.dijkstras.getGraphicsPanel().resetSize();
@@ -220,10 +198,7 @@ public class GUI extends JFrame implements ActionListener{
                 this.dijkstras.createPanel();
                 this.graphicsPanel = dijkstras.getGraphicsPanel();
                 this.createMenuBar(-1,-1);
-                //this.dijkstras.getFiles().parseData(this.dijkstras.getFiles().loadData(selectedFilePath));
-                //this.dijkstras.updateData();
                 this.fileLabel.setText("   Selected file: " + this.dijkstras.getFiles().getFilePath());
-                //this.graphicsPanel = dijkstras.getGraphicsPanel();
                 this.getContentPane().removeAll();
                 this.getContentPane().add(this.graphicsPanel, BorderLayout.CENTER);
                 this.revalidate();

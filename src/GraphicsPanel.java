@@ -5,7 +5,9 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.*;
 import java.util.ArrayList;
 
+// Handles drawing and interaction with the graph
 public class GraphicsPanel extends JPanel {
+    // Stores node and line graphical data
     private ArrayList<int[]> nodeData = new ArrayList<int[]>(); // (x, y, index, color)
     private ArrayList<int[]> lineData = new ArrayList<int[]>(); // (x1, y1, x2, y2 index, color, weight, width, textSize)
     private double nodeRadius = 12.5;
@@ -153,6 +155,7 @@ public class GraphicsPanel extends JPanel {
         });
     }
 
+    // Update node positions in the file when moved
     public void updateFile() {
         ArrayList<String[]> updatedNodeData = this.dijkstras.getFiles().getNodes();
         for (int i = 0; i < this.nodeData.size(); i++) {
@@ -163,6 +166,7 @@ public class GraphicsPanel extends JPanel {
         this.dijkstras.updateData();
     }
 
+    // Update node names in the file and lines
     public void updateNodeName(String oldName, String newName) {
         ArrayList<String[]> lines = this.dijkstras.getFiles().getLines();
         for (int i = 0; i < lines.size(); i++) {
@@ -178,6 +182,7 @@ public class GraphicsPanel extends JPanel {
         this.dijkstras.getFiles().setNodes(lines);
     }
 
+    // Draw nodes and lines
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
